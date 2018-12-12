@@ -1,0 +1,22 @@
+{
+  "name": "openvidu-angular",
+  "author": "OpenVidu",
+  "description": "OpenVidu Angular",
+  "license": "Apache-2.0",
+  "version": "2.6.0",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/OpenVidu/openvidu-call"
+  },
+  "dependencies": {
+    "openvidu-browser": "2.6.0",
+    "ngx-linkifyjs": "1.1.0",
+    "@angular/material": "7.0.0",
+    "@angular/cdk": "7.0.0",
+    "@angular/animations": "7.0.0"
+  },
+  "peerDependencies": {
+    "@angular/common": "7.0.0",
+    "@angular/core": "7.0.0"
+  }
+}

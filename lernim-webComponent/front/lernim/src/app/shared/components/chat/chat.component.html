@@ -1,0 +1,51 @@
+<div id="chatContainer">
+
+    <div id="chatComponent" [style.display]="_chatDisplay" [class.chatComponentLight]="lightTheme">
+        <div id="chatToolbar">
+            <span>{{session.sessionId}} - CHAT</span>
+            <button mat-icon-button (click)="close()" id="closeButton">
+                <mat-icon matTooltip="Close" color="warn">highlight_off</mat-icon>
+            </button>
+            <button mat-icon-button (click)="toggleParticipants()" id="participantButton">
+                <mat-icon *ngIf="showParticipants" matTooltip="show participants" >people_outline</mat-icon>
+                <mat-icon *ngIf="!showParticipants" matTooltip="show participants" >people</mat-icon>
+            </button>
+        </div>
+        <div *ngIf="showParticipants" id="participantsView" >
+            <div class="msg-info-participant">
+                <p >Conected users: </p>
+             </div>
+            <div *ngFor="let userData of this.usersData; let i = index" class="message">
+                <div class="msg-detail-participant">
+                    <div class="msg-info-participant">
+                        <mat-icon>person</mat-icon>
+                        <p >{{userData.userName}}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="message-wrap" #chatScroll>
+            <div *ngFor="let data of messageList; let i = index" class="message" [class.right]="data.connectionId === user.connectionId"
+                [class.left]="data.connectionId !== user.connectionId">
+                <img class="user-img"/>
+                <div class="msg-detail">
+                    <div class="msg-info">
+                        <p>{{data.userName}}</p>
+                    </div>
+                    <div class="msg-content">
+                        <span class="triangle"></span>
+                        <p class="text" [innerHTML]="data.message | linkify"></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="messageInput">
+            <input placeholder="Send a message" (keypress)="eventKeyPress($event)" [(ngModel)]="message" id="chatInput" />
+            <button mat-mini-fab id="sendButton" (click)="sendMessage()">
+                <mat-icon matTooltip="Send">send</mat-icon>
+            </button>
+        </div>
+
+    </div>
+</div>
