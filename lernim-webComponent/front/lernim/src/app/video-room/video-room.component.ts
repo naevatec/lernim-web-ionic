@@ -176,11 +176,6 @@ export class VideoRoomComponent implements OnInit, OnDestroy {
   micStatusChanged(): void {
     (<Publisher>this.mainStreamManager).publishAudio(!this.publishAudio);
     this.sendSignalUserChanged({ isAudioActive: !this.publishAudio });
-    // if (this.publishAudio) {
-    //   this.publishAudioIcon = 'mic';
-    // } else {
-    //   this.publishAudioIcon = 'mic_off';
-    // }
   }
 
   private sendSignalUserChanged(data: any): void {
@@ -513,6 +508,8 @@ export class VideoRoomComponent implements OnInit, OnDestroy {
       this.session.connect(token, { userName: this.myUserName, isTeacher: false })
       .then(() => {
         this.student = true;
+        this.joinSession.emit();
+        this.openviduLayout.updateLayout();
       })
       .catch((error) => {
         this.error.emit({ error: error.error, messgae: error.message, code: error.code, status: error.status });

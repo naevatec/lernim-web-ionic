@@ -50,8 +50,8 @@ export class WebComponentComponent implements OnInit {
   ngOnInit() {}
 
   validateParameters(): boolean {
-    if ((this._sessionName && this.openviduServerUrl && this.openviduSecret && this._user && this._roleTeacher)
-    || (this._token && this._user && this._roleTeacher)) {
+    if ((this._sessionName && this.openviduServerUrl && this.openviduSecret && this._user /*&& this._roleTeacher*/)
+    || (this._token && this._user /*&& this._roleTeacher*/)) {
       return true;
     }
     return false;
