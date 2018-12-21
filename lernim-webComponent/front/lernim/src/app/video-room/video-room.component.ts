@@ -430,6 +430,8 @@ export class VideoRoomComponent implements OnInit, OnDestroy {
             this.usersData.map((uData) => {
               if (uData.userName === JSON.parse(from.data).userName) {
                 uData.interventionRequired = false;
+                this.studentAccessGranted = false;
+                this.myStudentAccessGranted = false;
               }
             });
           }

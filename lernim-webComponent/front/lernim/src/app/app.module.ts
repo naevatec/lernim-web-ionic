@@ -29,7 +29,7 @@ import { WebComponentComponent } from './web-component/web-component.component';
 import { ElementZoneStrategyFactory } from 'elements-zone-strategy';
 import { LinkifyPipe } from './shared/pipes/linkfy';
 import { NgxLinkifyjsModule } from 'ngx-linkifyjs';
-import { InterventionAskedPipe } from './shared/pipes//intervention-asked';
+import { InterventionAskedPipe } from './shared/pipes/intervention-asked';
 
 @NgModule({
   declarations: [

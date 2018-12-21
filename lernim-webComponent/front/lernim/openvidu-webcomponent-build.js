@@ -10,23 +10,23 @@ var VERSION = process.argv[2];
 
 async function buildElement() {
   const files = [
-    './dist/openvidu-call/runtime.js',
-    './dist/openvidu-call/polyfills.js',
-    './dist/openvidu-call/scripts.js',
-    './dist/openvidu-call/main.js',
+    './dist/openvidu-lernim/runtime.js',
+    './dist/openvidu-lernim/polyfills.js',
+    './dist/openvidu-lernim/scripts.js',
+    './dist/openvidu-lernim/main.js',
   ];
 
   try {
     await fs.ensureDir('openvidu-webcomponent');
     await concat(files, './openvidu-webcomponent/openvidu-webcomponent-' + VERSION + '.js')
-    await fs.copy('./dist/openvidu-call/styles.css', './openvidu-webcomponent/openvidu-webcomponent-' + VERSION + '.css');
+    await fs.copy('./dist/openvidu-lernim/styles.css', './openvidu-webcomponent/openvidu-webcomponent-' + VERSION + '.css');
   } catch (err) {
     console.error('Error executing build funtion in webcomponent-builds.js', err);
   }
 }
 
 async function copyFiles() {
-  const destination = '../../../openvidu-tutorials/openvidu-webcomponent/web';
+  const destination = '../../../../openvidu-tutorials/openvidu-webcomponent/web';
   try {
     await fs.ensureDir('openvidu-webcomponent');
     await fs.copy('./openvidu-webcomponent/', destination);
