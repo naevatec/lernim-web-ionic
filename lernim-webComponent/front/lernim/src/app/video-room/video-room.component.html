@@ -55,8 +55,8 @@
 
   <div id="layout" class="bounds" [class.boundsLight]="lightTheme">
     <div class="OT_root OT_publisher custom-class">
-      <stream-component #videoStream *ngIf="mainStreamManager" [streamManager]="mainStreamManager" [publishAudio]= "publishAudio" [muted]="(this.teacher && !studentAccessGranted) || (!this.teacher && myStudentAccessGranted)" [small]="false" [lightTheme]="lightTheme" [showNotification]="messageReceived && chatDisplay === 'none'" (dblclick)="enlargeElement($event)"></stream-component>
-      <stream-component #videoStream *ngIf="extraStreamManager && this.studentAccessGranted" [streamManager]="extraStreamManager" [muted]= "teacher" [small]="true" [lightTheme]="lightTheme" [showNotification]="messageReceived && chatDisplay === 'none'" (dblclick)="enlargeElement($event)" ></stream-component>
+      <stream-component #videoStream *ngIf="mainStreamManager" [streamManager]="mainStreamManager" [publishAudio]= "publishAudio" [muted]="(this.teacher && !studentAccessGranted) || (!this.teacher && myStudentAccessGranted)" [small]="false" [lightTheme]="lightTheme" [showNotification]="messageReceived && chatDisplay === 'none'"></stream-component>
+      <stream-component #videoStream *ngIf="extraStreamManager && this.studentAccessGranted" [streamManager]="extraStreamManager" [muted]= "teacher" [small]="true" [lightTheme]="lightTheme" [showNotification]="messageReceived && chatDisplay === 'none'"></stream-component>
     </div>
     <div class="OT_root OT_dialog custom-class" [style.display]="chatDisplay" *ngIf="this.userChat">
       <chat-component #chatComponent [usersData]="this.usersData" [user]="this.userChat" [session]= "this.session" [chatDisplay]="chatDisplay" [lightTheme]="lightTheme" [messageList]="messageList" (closeChat)="toggleChat(undefined)"></chat-component>

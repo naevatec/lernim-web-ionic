@@ -51,11 +51,6 @@ export class StreamComponent implements OnInit {
       this.muted = changes['muted'].currentValue;
       console.warn('Small: ' + this.small + ' | Muted: '  + this.muted);
       this.mutedSound = this.muted;
-      if (this.mutedSound) {
-        this.mutedSoundIcon = 'volume_off';
-      } else {
-        this.mutedSoundIcon = 'volume_up';
-      }
     }
     if (changes['publishAudio']) {
       this.publishAudio = changes['publishAudio'].currentValue;

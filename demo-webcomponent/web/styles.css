@@ -1,0 +1,82 @@
+
+
+header {
+    background-color: rgb(16, 145, 138);
+    padding: 0.5em;
+    border-bottom-style: groove;
+    border-width: 3px; 
+    border-bottom-color: rgb(10, 229, 236);
+}
+
+footer {
+    background-color: rgb(16, 145, 138);
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    padding: 0.5em 0;
+    border-top-style: ridge;
+    border-width: 2px; 
+    border-top-color: rgb(10, 229, 236);
+}
+
+header p {
+    font-size: 26px;
+    font-weight: bold;
+    margin-left: 2em;
+}
+
+header p span {
+    font-size: 42px;
+    font-weight: normal;
+    font-family: 'Pacifico', cursive;
+}
+
+.flex-container {
+    display: flex;
+    padding: 0.5em;
+}
+
+.center {
+    text-align: center;
+    padding: 0.5em;
+}
+
+.button {
+    width: 200px;
+    height: 25px; 
+    cursor: pointer;
+}
+
+.infoFooter1 {
+    padding: 1em;
+    font-size: 20px;
+    float: left;
+}
+.infoFooter2 {
+    padding: 1em;
+    font-size: 20px;
+    float: right;
+}
+
+label {
+    width: 120px;
+}
+
+#main {
+    margin: auto;
+    margin-top: 1em;
+    max-width: 60%;
+    padding-top: 5em;
+}
+
+#logo {
+    text-align: center; 
+}
+
+#login {
+    text-align: left;
+    padding: 2em 1em;
+    display: flex;
+    justify-content: center;
+}
+

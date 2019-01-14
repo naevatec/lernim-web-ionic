@@ -25,20 +25,7 @@ async function buildElement() {
   }
 }
 
-async function copyFiles() {
-  const destination = '../../../../openvidu-tutorials/openvidu-webcomponent/web';
-  try {
-    await fs.ensureDir('openvidu-webcomponent');
-    await fs.copy('./openvidu-webcomponent/', destination);
-  } catch (err) {
-    console.error('Error executing copy function in webcomponent-builds.js', err);
-  }
-}
-
 buildElement()
-  .then(() => {
-    return copyFiles();
-  })
   .then(() => {
     console.log('OpenVidu Web Component (' + VERSION + ') built')
   });

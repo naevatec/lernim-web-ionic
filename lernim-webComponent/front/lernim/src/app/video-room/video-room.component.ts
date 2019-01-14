@@ -352,12 +352,10 @@ export class VideoRoomComponent implements OnInit, OnDestroy {
           const chatData: UserModel = JSON.parse(event.connection.data);
           this.userChat = chatData;
           this.userChat.connectionId = this.session.connection.connectionId;
-          console.warn('ConectionsID: ' + this.userChat.connectionId);
       } else {
           console.warn('OTHER USER\'S CONNECTION CREATED!');
           console.warn('Conection DATA: ' + event.connection.data);
       }
-      console.warn(event.connection);
       if (event.connection !== this.session.connection) {
           if (JSON.parse(event.connection.data).isTeacher) {
               this.teacherConnection = event.connection;
@@ -546,8 +544,8 @@ export class VideoRoomComponent implements OnInit, OnDestroy {
         this.extraStreamManager = this.teacherStream;
     }
     this.mainStreamManager = streamManager;
-
     });
+
     this.OVPublisher.on('videoElementCreated', (event: VideoElementEvent) => {
         console.warn('OpenVidu video element created by Publisher: ', event.element);
     });
@@ -602,6 +600,7 @@ export class VideoRoomComponent implements OnInit, OnDestroy {
       this.interventionIcon = (this.interventionRequired ? 'voice_over_off' : 'record_voice_over');
 
     });
+
     this.OVPublisher.on('accessDenied', (event) => {
       console.error('OpenVidu camera access denied');
     });
