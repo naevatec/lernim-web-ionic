@@ -80,3 +80,8 @@ label {
     justify-content: center;
 }
 
+a:link, a:visited, a:active {
+    text-decoration:none;
+    color: #000;
+}
+
