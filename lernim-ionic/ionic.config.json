@@ -1,0 +1,7 @@
+{
+  "name": "Lernim-OpenVidu",
+  "integrations": {
+    "cordova": {}
+  },
+  "type": "angular"
+}

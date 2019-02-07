@@ -1,0 +1,25 @@
+<ion-content padding id="dashboard-content">
+
+  <div id="card">
+      <img class="demo-logo" src="assets/images/openvidu_white_bg_transp.png" />
+    <div id="form">
+      <ion-item align="center">
+        <ion-label position="floating">UserName</ion-label>
+        <ion-input [(ngModel)]="myUserName"></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label position="floating">Session</ion-label>
+        <ion-input [(ngModel)]="mySessionId"></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label position="floating">Teacher</ion-label>
+        <ion-input [(ngModel)]="teacher"></ion-input>
+      </ion-item>
+        
+      <ion-button id="join-button" (click)="join()" expand="block" shape="round" color="primary">
+        <ion-icon slot="start" name="videocam"></ion-icon>
+        Join
+      </ion-button>
+    </div>
+  </div>
+</ion-content>
