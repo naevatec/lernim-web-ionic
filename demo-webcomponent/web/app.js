@@ -38,7 +38,7 @@ function joinSession() {
  * --------------------------
  * These methods retrieve the mandatory user token from OpenVidu Server.
  * This behavior MUST BE IN YOUR SERVER-SIDE IN PRODUCTION (by using
- * the API REST, openvidu-java-client or openvidu-node-client):
+ * the API REST, openvidu-java-client or openvidu-node-client, See https://openvidu.io/docs/reference-docs/openvidu-java-client/)
  *   1) Initialize a session in OpenVidu Server	(POST /api/sessions)
  *   2) Generate a token in OpenVidu Server		(POST /api/tokens)
  *   3) Configure OpenVidu Web Component in your client side with the token
