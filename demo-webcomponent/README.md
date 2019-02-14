@@ -63,19 +63,4 @@ We need to ask OpenVidu Server for a user token in order to connect to our sessi
   * Configure OpenVidu Web Component in your client side with the token
   
 
-
- 
-  
-
-
-
-
-
-
-
-
-
-
-
-
 [OpenViduLogo]: https://secure.gravatar.com/avatar/5daba1d43042f2e4e85849733c8e5702?s=120
