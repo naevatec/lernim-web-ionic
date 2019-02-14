@@ -48,11 +48,7 @@ var OPENVIDU_SERVER_URL = 'https://' + location.hostname + ':4443';
 var OPENVIDU_SERVER_SECRET = "MY_SECRET";
 
 function getToken(sessionName) {
-   // if (document.getElementById('roleTeacher').value == "T") {
-        return createSession(sessionName).then((sessionId) => createToken(sessionId));
-   // } else {
-   //     return createToken(sessionName);
-   // }
+    return createSession(sessionName).then((sessionId) => createToken(sessionId));
 }
 
 function createSession(sessionName) { // See https://openvidu.io/docs/reference-docs/REST-API/#post-apisessions
