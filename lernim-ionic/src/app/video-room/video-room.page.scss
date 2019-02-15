@@ -4,6 +4,9 @@
   padding-right: 10px;
 }
 
+ion-toolbar div {
+  display: inherit;
+}
 
 #video-room-content{
   overflow-y: none;
@@ -37,6 +40,10 @@
 
 .icon-button {
   display: inline-flex;
+}
+
+.sessionTitle {
+  font-size: 16px;
 }
 
 .bounds {

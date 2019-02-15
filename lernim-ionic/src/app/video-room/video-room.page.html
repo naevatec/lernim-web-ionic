@@ -3,26 +3,11 @@
     <div slot="start">
       <img class="demo-logo" src="assets/images/openvidu_vert_white_bg_trans_cropped.png" />
     </div>
-    <ion-title>Session: {{mySessionId}}</ion-title>
+    <ion-title class= "sessionTitle">Session: {{mySessionId}}</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <div id="topButtons">
-  <!-- <ion-fab horizontal="center" >
-    <ion-fab-button *ngIf="(student && !this.myStudentAccessGranted && !this.studentAccessGranted)" mini color="light" (click)="askForIntervention()">
-      <ion-icon name="{{interventionIcon}}"></ion-icon>
-    </ion-fab-button>
-  </ion-fab> -->
-  <!-- <div *ngIf= "teacher" >
-    <div *ngFor="let userData of this.usersData | interventionAskedFilter ; let i = index" >
-      <ion-fab horizontal="center">
-        <ion-fab-button *ngIf= "!studentAccessGranted || userData.accessGranted" mini color="secondary" (click)="grantIntervention(!studentAccessGranted, userData)">
-          <ion-icon *ngIf="this.studentAccessGranted" name="close"></ion-icon>
-          <ion-icon *ngIf="!this.studentAccessGranted" name="person-add"></ion-icon>
-        </ion-fab-button>
-      </ion-fab>
-    </div>
-  </div> -->
   <ion-fab horizontal="center" >
     <ion-fab-button *ngIf="(student && !this.myStudentAccessGranted)" mini color="light" (click)="askForIntervention()">
       <ion-icon name="{{interventionIcon}}"></ion-icon>
@@ -82,5 +67,4 @@
       <ion-icon name="call"></ion-icon>
     </ion-fab-button>
   </ion-fab>
-
 </ion-content>

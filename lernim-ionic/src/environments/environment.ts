@@ -4,8 +4,8 @@
 // The list of which env maps to which file can be found in `.angular-cli.json`.
 export const environment = {
   production: false,
-  openvidu_url: 'https://demos.openvidu.io:4443',
-  // openvidu_url: 'https://192.168.1.106:4443',
+  // openvidu_url: 'https://demos.openvidu.io:4443',
+  openvidu_url: 'https://localhost:4443',
   openvidu_secret: 'MY_SECRET'
 };
 

@@ -15,7 +15,6 @@
     <div id="message-wrap" class="message-wrap">
         <div *ngFor="let data of messageList; let i = index" class="message" [class.right]="data.connectionId === user.connectionId"
             [class.left]="data.connectionId !== user.connectionId">
-            <img class="user-img"/>
             <div class="msg-detail">
                 <div class="msg-info">
                     <p>{{data.userName}}</p>
