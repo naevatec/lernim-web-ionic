@@ -11,6 +11,7 @@ export class StreamComponent implements OnInit {
 
     @Input() streamManager: StreamManager;
     @Input() muted: boolean;
+    @Input() rotateVideo: boolean;
 
     constructor() {}
 

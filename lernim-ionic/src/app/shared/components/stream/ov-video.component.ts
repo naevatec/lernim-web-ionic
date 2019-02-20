@@ -5,7 +5,8 @@ declare var cordova;
 
 @Component({
     selector: 'ov-video',
-    template: `<video #videoElement [id]="'video-' + _streamManager.stream.streamId" [muted]="mutedSound"></video>`,
+    template: `<video #videoElement [id]="'video-' + _streamManager.stream.streamId" [muted]="mutedSound"
+    [class.rotate]="rotateVideo"></video>`,
     styleUrls: ['./stream.component.scss']
 })
 export class OpenViduVideoComponent implements AfterViewInit {
@@ -13,6 +14,7 @@ export class OpenViduVideoComponent implements AfterViewInit {
     @ViewChild('videoElement') elementRef: ElementRef;
 
     @Input() mutedSound: boolean;
+    @Input() rotateVideo: boolean;
 
     _streamManager: StreamManager;
     rotationFunction;

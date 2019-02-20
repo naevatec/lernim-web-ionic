@@ -98,7 +98,7 @@ export class VideoRoomPage implements OnInit, OnDestroy {
     // Join form
     mySessionId: string;
     myUserName: string;
-    role: string;
+    role: boolean;
 
     @Input() sessionName: string;
     @Input() user: string;
@@ -397,7 +397,11 @@ export class VideoRoomPage implements OnInit, OnDestroy {
     private generateParticipantInfo() {
         this.mySessionId = localStorage.getItem('mySessionId');
         this.myUserName = localStorage.getItem('myUserName');
-        this.role = localStorage.getItem('isTeacher');
+        if (localStorage.getItem('isTeacher') === 'true') {
+            this.role = true;
+        } else {
+            this.role = false;
+        }
     }
 
     private subscribeToUserChanged() {
@@ -512,7 +516,7 @@ export class VideoRoomPage implements OnInit, OnDestroy {
 
     private subscribeToSignals() {
         // Signals
-        if (this.role !== 'TEACHER' /*|| this.roleTeacher === false*/) {
+        if (this.role === false /*|| this.roleTeacher === false*/) {
             this.session.on('signal:grantIntervention', (msg: SignalEvent) => {
                 if (msg.data === 'true') {
                     // Publish
@@ -532,7 +536,7 @@ export class VideoRoomPage implements OnInit, OnDestroy {
                 }
             });
         }
-        if (this.role === 'TEACHER' /*|| this.roleTeacher === true*/) {
+        if (this.role === true /*|| this.roleTeacher === true*/) {
             this.session.on('signal:askIntervention', (msg: SignalEvent) => {
                 const from: Connection = msg.from;
                 const petition: boolean = JSON.parse(msg.data).interventionRequired;
@@ -581,7 +585,7 @@ export class VideoRoomPage implements OnInit, OnDestroy {
         if (this.token) {
             this.connect(this.token, this.roleTeacher);
         } else {
-            if (this.role === 'TEACHER') {
+            if (this.role === true) {
                 console.warn('connectToSession(): TEACHER');
                 this.openViduSrv.getToken(this.mySessionId, this.openviduServerUrl, this.openviduSecret)
                     .then((token) => {

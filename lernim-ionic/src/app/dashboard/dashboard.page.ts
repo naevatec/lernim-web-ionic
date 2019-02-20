@@ -27,4 +27,8 @@ export class DashboardPage implements OnInit {
             }
         }
     }
+
+    updateCheckBox() {
+        this.teacher = this.teacher;
+    }
 }

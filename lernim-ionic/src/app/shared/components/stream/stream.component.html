@@ -1,7 +1,7 @@
 
 <div class="OT_widget-container">
         <div class="nickname pointer"><p class="name-p">{{getNicknameTag()}}</p></div>
-        <ov-video [streamManager]="streamManager" [mutedSound]="mutedSound"></ov-video>
+        <ov-video [streamManager]="streamManager" [mutedSound]="mutedSound" [rotateVideo]="rotateVideo" ></ov-video>
         <div id="statusIcons">
                 <ion-badge color="danger" *ngIf="!streamManager.stream.audioActive">
                         <ion-icon name="mic-off" color="light"></ion-icon>

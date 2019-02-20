@@ -12,9 +12,8 @@
       </ion-item>
       <ion-item>
         <ion-label position="floating">Teacher</ion-label>
-        <ion-input [(ngModel)]="teacher"></ion-input>
+        <ion-checkbox [(ngModel)]="teacher" (ionChange)="updateCheckBox()"></ion-checkbox>
       </ion-item>
-        
       <ion-button id="join-button" (click)="join()" expand="block" shape="round" color="primary">
         <ion-icon slot="start" name="videocam"></ion-icon>
         Join

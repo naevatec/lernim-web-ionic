@@ -25,7 +25,6 @@ ion-footer {
 .message-wrap {
   padding: 0 5px;
   height: 100%;
-  text-align: right;
   overflow: auto;
 }
 
@@ -94,7 +93,7 @@ span.triangle {
 }
 
 .message.left .msg-detail {
-  padding-left: 65px;
+  padding-left: 5px;
 }
 
 .message.left .user-img {
@@ -117,6 +116,10 @@ span.triangle {
 /* End message from other user */
 
 /* Start my messages */
+
+.right {
+  text-align: right;
+}
 
 .message.right .msg-detail .msg-info {
   text-align: right;
