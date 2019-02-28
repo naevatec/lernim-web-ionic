@@ -23,14 +23,13 @@ declare var cordova;
             state(
                 'in',
                 style({
-                    transform: 'translateX(0px)',
+                    transform: 'translateX(0px)'
                 }),
             ),
             state(
                 'out',
                 style({
-                    transform: 'translateX(100px)',
-                    display: 'none',
+                    transform: 'translateX(100px)'
                 }),
             ),
             transition('in => out', animate('200ms', keyframes([style({ transform: 'translateX(100px)' })]))),
@@ -40,14 +39,13 @@ declare var cordova;
             state(
                 'in',
                 style({
-                    transform: 'translateX(0px)',
+                    transform: 'translateX(0px)'
                 }),
             ),
             state(
                 'out',
                 style({
                     transform: 'translateX(100px)',
-                    display: 'none',
                 }),
             ),
             transition('in => out', animate('200ms', keyframes([style({ transform: 'translateX(100px)' })]))),
@@ -58,13 +56,13 @@ declare var cordova;
                 'in',
                 style({
                     transform: 'translateY(0px)',
+                    visibility: 'visible'
                 }),
             ),
             state(
                 'out',
                 style({
-                    transform: 'translateY(100px)',
-                    display: 'none',
+                    visibility: 'hidden'
                 }),
             ),
             transition('in => out', animate('200ms', keyframes([style({ transform: 'translateY(100px)' })]))),
@@ -237,6 +235,7 @@ export class VideoRoomPage implements OnInit, OnDestroy {
             this.bigElement = undefined;
         }
         this.openviduLayout.updateLayout();
+        this.refreshVideos();
     }
 
     private changeAudioIcons(streamManager: StreamManager): void {
@@ -376,8 +375,8 @@ export class VideoRoomPage implements OnInit, OnDestroy {
         this.chatNotification = this.buttonsVisibility;
     }
 
-    public toggleButtonsOrEnlargeStream(event) {
-        const element: HTMLElement = event.path.filter((e: HTMLElement) => e.className && e.className.includes('OT_root'))[0];
+    public toggleButtonsOrEnlargeStream(event: any) {
+        const element: HTMLElement = event.composedPath().filter((e: HTMLElement) => e.className && e.className.includes('OT_root'))[0];
         if (this.bigElement && element === this.bigElement) {
             console.log('Elemento local es igual que elemento pulsado');
             this.toggleButtons();
@@ -392,6 +391,7 @@ export class VideoRoomPage implements OnInit, OnDestroy {
             this.bigElement = element;
         }
         this.openviduLayout.updateLayout();
+        this.refreshVideos();
     }
 
     private generateParticipantInfo() {
@@ -421,6 +421,7 @@ export class VideoRoomPage implements OnInit, OnDestroy {
                     this.publishVideoExtra = data.isVideoActiveExtra;
                 }
             });
+            this.refreshVideos();
         });
     }
 
@@ -455,6 +456,7 @@ export class VideoRoomPage implements OnInit, OnDestroy {
             if (JSON.parse(streamManager.stream.connection.data).isTeacher) {
                 if (this.myStudentAccessGranted) {
                     this.unpublish();
+                    this.refreshVideos();
                 }
                 delete this.mainStreamManager;
                 delete this.extraStreamManager;
@@ -560,6 +562,7 @@ export class VideoRoomPage implements OnInit, OnDestroy {
                 }
             });
         }
+        this.updateLayout();
     }
 
     private subscribedToChat() {
@@ -676,6 +679,7 @@ export class VideoRoomPage implements OnInit, OnDestroy {
                     this.student = true;
                     this.joinSession.emit();
                     this.openviduLayout.updateLayout();
+                    this.refreshVideos();
                 })
                 .catch((error) => {
                     this.error.emit({ error: error.error, messgae: error.message, code: error.code, status: error.status });
@@ -780,6 +784,7 @@ export class VideoRoomPage implements OnInit, OnDestroy {
 
         this.OVPublisher.on('streamPlaying', () => {
             this.openviduLayout.updateLayout();
+            this.refreshVideos();
             (<HTMLElement>this.mainStreamManager.videos[0].video).parentElement.classList.remove('custom-class');
         });
     }
@@ -787,12 +792,14 @@ export class VideoRoomPage implements OnInit, OnDestroy {
     private unpublish() {
         this.session.unpublish(this.OVPublisher);
         this.updateLayout();
+        this.refreshVideos();
     }
 
     private updateLayout() {
         this.resizeTimeout = setTimeout(() => {
-            this.openviduLayout.updateLayout();
+            this.openviduLayout.updateLayout(); 
         }, 20);
+        this.refreshVideos();
     }
 
     private async openAlertError(message: string) {

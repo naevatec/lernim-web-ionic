@@ -42,11 +42,11 @@ export class OpenViduVideoComponent implements AfterViewInit {
              this._streamManager.addVideoElement(this.elementRef.nativeElement);
         }
         if (this.isIos()) {
-            this._streamManager.on('streamPropertyChanged', event => {
-                if ((<StreamPropertyChangedEvent>event).changedProperty === 'videoDimensions') {
+        //    this._streamManager.on('streamPropertyChanged', event => {
+        //        if ((<StreamPropertyChangedEvent>event).changedProperty === 'videoDimensions') {
                     this.applyIosIonicVideoAttributes();
-                }
-            });
+        //        }
+        //    });
         }
     }
 
@@ -60,16 +60,20 @@ export class OpenViduVideoComponent implements AfterViewInit {
     }
 
     private applyIosIonicVideoAttributes() {
-        const ratio = this._streamManager.stream.videoDimensions.height / this._streamManager.stream.videoDimensions.width;
-        this.elementRef.nativeElement.style.width = '100% !important';
+        // this.elementRef.nativeElement.style.width = this._streamManager.stream.videoDimensions.width;
+        this.elementRef.nativeElement.style.width ='100% !important';
         this.elementRef.nativeElement.style.objectFit = 'fill';
+        this.elementRef.nativeElement.style.position = 'relative';
+        this.elementRef.nativeElement.style.display = 'inline-block';
         this.elementRef.nativeElement.style.zIndex = '-1';
-        const computedWidth = this.elementRef.nativeElement.offsetWidth;
-        this.elementRef.nativeElement.style.height = computedWidth * ratio + 'px';
+        // const ratio = this._streamManager.stream.videoDimensions.height / this._streamManager.stream.videoDimensions.width;
+        // const computedWidth = this.elementRef.nativeElement.offsetWidth;
+        // this.elementRef.nativeElement.style.height = computedWidth * ratio + 'px';
+        // this.elementRef.nativeElement.style.height= '100% !important';
         if (!this._streamManager.remote) {
             // It is a Publisher video. Custom iosrtc plugin mirror video
-            this.elementRef.nativeElement.style.transform = 'scaleX(-1)';
-        }
+            this.elementRef.nativeElement.style.transform = 'scale(-1,1)';
+         }
         cordova.plugins.iosrtc.refreshVideos();
     }
 
