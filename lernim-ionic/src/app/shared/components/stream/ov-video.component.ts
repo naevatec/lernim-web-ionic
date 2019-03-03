@@ -61,7 +61,7 @@ export class OpenViduVideoComponent implements AfterViewInit {
 
     private applyIosIonicVideoAttributes() {
         // this.elementRef.nativeElement.style.width = this._streamManager.stream.videoDimensions.width;
-        this.elementRef.nativeElement.style.width ='100% !important';
+        this.elementRef.nativeElement.style.width = '100% !important';
         this.elementRef.nativeElement.style.objectFit = 'fill';
         this.elementRef.nativeElement.style.position = 'relative';
         this.elementRef.nativeElement.style.display = 'inline-block';

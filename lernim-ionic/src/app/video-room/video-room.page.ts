@@ -113,6 +113,7 @@ export class VideoRoomPage implements OnInit, OnDestroy {
     teacher = false;
     student = false;
     interventionRequired = false;
+    myInterventionRequired = false;
     studentAccessGranted = false;
     myStudentAccessGranted = false;
     messageList: { connectionId: string; userName: string; message: string }[] = [];
@@ -314,6 +315,9 @@ export class VideoRoomPage implements OnInit, OnDestroy {
             const msg = {
                 interventionRequired: !this.interventionRequired
             };
+            const msg2 = {
+                myInterventionRequired: !this.myInterventionRequired
+            };
 
             this.session.signal({
                 type: 'askIntervention',
@@ -321,8 +325,14 @@ export class VideoRoomPage implements OnInit, OnDestroy {
                 data: JSON.stringify(msg)
             });
 
+            this.session.signal({
+                type: 'askMyIntervention',
+                data: JSON.stringify(msg2)
+            });
+
             // Invert intervention request
             this.interventionRequired = !this.interventionRequired;
+            this.myInterventionRequired = !this.myInterventionRequired;
             // Change intervention icon
             this.interventionIcon = (this.interventionRequired ? 'close' : 'hand');
 
@@ -339,6 +349,12 @@ export class VideoRoomPage implements OnInit, OnDestroy {
             to: this.OVConnections.filter(connection => JSON.parse(connection.data).userName === userData.userName),
             data: grant.toString()
         });
+
+        this.session.signal({
+            type: 'grantMyIntervention',
+            data: grant.toString()
+        });
+
         // Set 'accessGranted' property of proper userData to 'grant' value
         this.usersData.map((u) => {
             if (u.userName === userData.userName) {
@@ -537,6 +553,16 @@ export class VideoRoomPage implements OnInit, OnDestroy {
                     this.interventionIcon = (this.interventionRequired ? 'close' : 'hand');
                 }
             });
+            this.session.on('signal:askMyIntervention', (msg: SignalEvent) => {
+                this.myInterventionRequired = JSON.parse(msg.data).myInterventionRequired;
+            });
+
+            this.session.on('signal:grantMyIntervention', (msg: SignalEvent) => {
+                if (msg.data === 'false') {
+                    this.myInterventionRequired = false;
+                }
+            });
+
         }
         if (this.role === true /*|| this.roleTeacher === true*/) {
             this.session.on('signal:askIntervention', (msg: SignalEvent) => {
@@ -797,7 +823,7 @@ export class VideoRoomPage implements OnInit, OnDestroy {
 
     private updateLayout() {
         this.resizeTimeout = setTimeout(() => {
-            this.openviduLayout.updateLayout(); 
+            this.openviduLayout.updateLayout();
         }, 20);
         this.refreshVideos();
     }
