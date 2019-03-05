@@ -68,6 +68,23 @@ declare var cordova;
             transition('in => out', animate('200ms', keyframes([style({ transform: 'translateY(100px)' })]))),
             transition('out => in', animate('200ms', keyframes([style({ transform: 'translateY(0px)' })]))),
         ]),
+        trigger('slideBottomTop', [
+            state(
+                'in',
+                style({
+                    transform: 'translateY(0px)',
+                    visibility: 'visible'
+                }),
+            ),
+            state(
+                'out',
+                style({
+                    visibility: 'hidden'
+                }),
+            ),
+            transition('in => out', animate('200ms', keyframes([style({ transform: 'translateY(0px)' })]))),
+            transition('out => in', animate('200ms', keyframes([style({ transform: 'translateY(100px)' })]))),
+        ]),
     ],
 })
 

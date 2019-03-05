@@ -21,8 +21,8 @@ ion-toolbar div {
 }
 
 #rightButtons ion-fab-button{
-  padding-top: 10px;
-  --box-shadow: none;
+  padding-top: 5px;
+  margin: 15px 0;
 }
 
 #topButtons {
@@ -31,7 +31,8 @@ ion-toolbar div {
 
 #topButtons ion-fab-button{
   --box-shadow: none;
-  margin: auto;
+  margin: 3px auto;
+  padding: 3px;
 }
 
 #mainVideo {

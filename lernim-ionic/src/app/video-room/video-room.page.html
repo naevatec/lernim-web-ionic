@@ -9,18 +9,18 @@
 
 <div id="topButtons">
   <ion-fab horizontal="center">
-    <ion-fab-button *ngIf="student && !this.myInterventionRequired" mini color="light" (click)="askForIntervention()">
+    <ion-fab-button *ngIf="student && !this.myInterventionRequired" size="small" color="light" (click)="askForIntervention()">
       <ion-icon name="{{interventionIcon}}"></ion-icon>
     </ion-fab-button>
-    <ion-fab-button *ngIf="(student && this.interventionRequired && !this.myStudentAccessGranted)" mini color="light"
+    <ion-fab-button *ngIf="(student && this.interventionRequired && !this.myStudentAccessGranted)" size="small" color="light"
       (click)="askForIntervention()">
       <ion-icon name="{{interventionIcon}}"></ion-icon>
     </ion-fab-button>
   </ion-fab>
-  <ion-fab horizontal="center">
+  <ion-fab horizontal="center" [@slideBottomTop]="buttonsVisibility">
     <div *ngIf="teacher" class="icon-button">
       <div *ngFor="let userData of this.usersData | interventionAskedFilter ; let i = index">
-        <ion-fab-button *ngIf="!studentAccessGranted || userData.accessGranted" mini color="secondary" (click)="grantIntervention(!studentAccessGranted, userData)">
+        <ion-fab-button *ngIf="!studentAccessGranted || userData.accessGranted" size="small" color="secondary" (click)="grantIntervention(!studentAccessGranted, userData)">
           <ion-icon *ngIf="this.studentAccessGranted" name="close"></ion-icon>
           <ion-icon *ngIf="!this.studentAccessGranted" name="person-add"></ion-icon>
         </ion-fab-button>
@@ -44,28 +44,28 @@
 
   <ion-fab vertical="top" horizontal="end" slot="fixed" id="rightButtons">
     <ion-fab-button *ngIf="(teacher && !this.studentAccessGranted) || (student && this.myStudentAccessGranted)"
-      [@slideLeftRight]="buttonsVisibility" mini [color]="camBtnColor" (click)="camStatusMainChanged()">
+      [@slideLeftRight]="buttonsVisibility" size="small" [color]="camBtnColor" (click)="camStatusMainChanged()">
       <ion-icon name="{{camBtnIcon}}"></ion-icon>
     </ion-fab-button>
-    <ion-fab-button *ngIf="teacher && this.studentAccessGranted" [@slideLeftRight]="buttonsVisibility" mini [color]="camBtnColor"
+    <ion-fab-button *ngIf="teacher && this.studentAccessGranted" [@slideLeftRight]="buttonsVisibility" size="small" [color]="camBtnColor"
       (click)="camStatusExtraChanged()">
       <ion-icon name="{{camBtnIcon}}"></ion-icon>
     </ion-fab-button>
 
     <ion-fab-button *ngIf="(teacher && !this.studentAccessGranted) || (student && this.myStudentAccessGranted)"
-      [@slideLeftRight]="buttonsVisibility" mini [color]="micBtnColor" (click)="micStatusMainChanged()">
+      [@slideLeftRight]="buttonsVisibility" size="small" [color]="micBtnColor" (click)="micStatusMainChanged()">
       <ion-icon name="{{micBtnIcon}}"></ion-icon>
     </ion-fab-button>
-    <ion-fab-button *ngIf="teacher && this.studentAccessGranted" [@slideLeftRight]="buttonsVisibility" mini [color]="micBtnColor"
+    <ion-fab-button *ngIf="teacher && this.studentAccessGranted" [@slideLeftRight]="buttonsVisibility" size="small" [color]="micBtnColor"
       (click)="micStatusExtraChanged()">
       <ion-icon name="{{micBtnIcon}}"></ion-icon>
     </ion-fab-button>
 
-    <ion-fab-button [@slideLeftRight]="buttonsVisibility" mini color="light" (click)="resetVideoSize()">
+    <ion-fab-button [@slideLeftRight]="buttonsVisibility" size="small" color="light" (click)="resetVideoSize()">
       <ion-icon name="apps"></ion-icon>
     </ion-fab-button>
 
-    <ion-fab-button [@slideLeftRightChat]="chatNotification" mini [color]="chatBtnColor" (click)="toggleChat()">
+    <ion-fab-button [@slideLeftRightChat]="chatNotification" size="small" [color]="chatBtnColor" (click)="toggleChat()">
       <ion-icon name="chatbubbles"></ion-icon>
     </ion-fab-button>
   </ion-fab>
