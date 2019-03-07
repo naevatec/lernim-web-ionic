@@ -54,6 +54,12 @@
 
 We need to ask OpenVidu Server for a user token in order to connect to our session. This process should entirely take place in our server-side, not in our client-side. But due to the lack of an application backend in this Demo, the JavaScript code itself will perform the POST operations to OpenVidu Server.
 
+You can see an example here:
+
+* [video-session.service.ts of classroom-demo](https://github.com/OpenVidu/classroom-demo/blob/master/src/angular/frontend/src/app/services/video-session.service.ts)
+
+* [SessionController.java of classroom-demo](https://github.com/OpenVidu/classroom-demo/blob/master/src/main/java/io/openvidu/classroom/demo/session_manager/SessionController.java)
+
 * This behavior MUST BE IN YOUR SERVER-SIDE IN PRODUCTION, by using the API REST, [openvidu-java-client](https://openvidu.io/docs/reference-docs/openvidu-java-client/) or [openvidu-node-client](https://openvidu.io/docs/reference-docs/openvidu-node-client/):
 
   * Initialize a session in OpenVidu Server (POST /api/sessions)
