@@ -24,9 +24,9 @@
 
 * We need to reference two files to implement the webComponet:
 
-  * `openvidu-webcomponent-{VERSION}.js`: JavaScript file of OpenVidu Web Component. You don't have to manipulate this file.
+  * `openvidu-teaching-webcomponent-{VERSION}.js`: JavaScript file of OpenVidu Web Component. You don't have to manipulate this file.
   
-  * `openvidu-webcomponent-{VERSION}.css`: styles for OpenVidu Web Component. You don't have to manipulate this file.
+  * `openvidu-teaching-webcomponent-{VERSION}.css`: styles for OpenVidu Web Component. You don't have to manipulate this file.
   
 * OpenVidu Web Component emits events `joinSession`, `leaveSession` or `error`, so we can handle them in our JavaScript code. We just need to get the element once the document is ready and add all the listeners we want.
 

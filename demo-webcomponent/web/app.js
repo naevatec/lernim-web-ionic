@@ -1,5 +1,5 @@
 $(document).ready(() => {
-    var webComponent = document.querySelector('openvidu-webcomponent');
+    var webComponent = document.querySelector('openvidu-teaching-webcomponent');
     var form = document.getElementById('main');
 
     webComponent.addEventListener('joinSession', (event) => {
@@ -27,7 +27,7 @@ function joinSession() {
     }
  
     getToken(sessionName).then((token) => {
-        var webComponent = document.querySelector('openvidu-webcomponent');
+        var webComponent = document.querySelector('openvidu-teaching-webcomponent');
         webComponent.sessionConfig = { sessionName, user, token, roleTeacher };
     });
 }
