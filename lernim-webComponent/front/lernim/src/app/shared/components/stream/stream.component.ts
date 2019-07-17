@@ -4,7 +4,7 @@ import { StreamManager } from 'openvidu-browser';
 @Component({
   selector: 'stream-component',
   styleUrls: ['./stream.component.css'],
-  templateUrl: './stream.component.html',
+  templateUrl: './stream.component.html'
 })
 export class StreamComponent implements OnInit {
   fullscreenIcon = 'fullscreen';
@@ -16,6 +16,7 @@ export class StreamComponent implements OnInit {
   @Input() streamManager: StreamManager;
   @Input() lightTheme: boolean;
   @Input() compact: boolean;
+  @Input() onlyVideo: boolean;
   @Input() showNotification: boolean;
   @Input() small: boolean;
   @Input() muted: boolean;
@@ -49,7 +50,7 @@ export class StreamComponent implements OnInit {
   ngOnChanges(changes: SimpleChanges) { // Listen to 'muted' property changes
     if (changes['muted']) {
       this.muted = changes['muted'].currentValue;
-      console.warn('Small: ' + this.small + ' | Muted: '  + this.muted);
+      console.warn('Small: ' + this.small + ' | Muted: ' + this.muted);
       this.mutedSound = this.muted;
     }
     if (changes['publishAudio']) {
@@ -70,9 +71,9 @@ export class StreamComponent implements OnInit {
 
   getNicknameTag() {
     try {
-        return JSON.parse(this.streamManager.stream.connection.data).userName;
+      return JSON.parse(this.streamManager.stream.connection.data).userName;
     } catch (err) {
-        console.error('Username is not JSON formatted');
+      console.error('Username is not JSON formatted');
     }
   }
 

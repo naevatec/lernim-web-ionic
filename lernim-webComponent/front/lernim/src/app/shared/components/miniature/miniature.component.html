@@ -1,0 +1,9 @@
+<div id="miniature-block" *ngIf="amITeacher">
+  <div class="miniature-list">
+    <div class="message" *ngIf="students.length === 0">There isn't any student yet</div>
+    <div *ngFor="let student of students" class="miniature">
+      <stream-component #videoStream [streamManager]="student.stream" [onlyVideo]="true"></stream-component>
+      <div class="name">{{student.userName}}</div>
+    </div>
+  </div>
+</div>

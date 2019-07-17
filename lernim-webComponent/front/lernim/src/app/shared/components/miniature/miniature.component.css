@@ -1,0 +1,57 @@
+#miniature-block {
+  display: flex;
+  align-items: flex-end;
+  height: 120px;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  position: absolute;
+  z-index: 10;
+  overflow-x: auto;
+}
+
+.miniature-list {
+  display: flex;
+  flex-grow: 1;
+  flex-direction: row;
+  justify-content: center;
+  align-items: flex-end;
+  height: 50px;
+  background-color: rgba(0, 0, 0, 0.7);
+  border-top: 1px solid #3d3d3d;
+  border-top-left-radius: 5px;
+  border-top-right-radius: 5px;
+}
+
+.message {
+  line-height: 50px;
+  color: #ffffff;
+}
+
+.miniature {
+  position: relative;
+  width: 160px;
+  height: 120px;
+  background-color: rgba(0, 0, 0, 0.7);
+  margin-right: 20px;
+}
+
+.miniature:last-child {
+  margin-right: 0;
+}
+
+.miniature .name {
+  position: absolute;
+  color: #ffffff;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  text-align: center;
+  line-height: 20px;
+  font-size: 12px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+  padding-left: 10px;
+  padding-right: 10px;
+}
