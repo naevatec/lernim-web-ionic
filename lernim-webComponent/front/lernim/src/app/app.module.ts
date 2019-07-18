@@ -30,6 +30,7 @@ import { ElementZoneStrategyFactory } from 'elements-zone-strategy';
 import { LinkifyPipe } from './shared/pipes/linkfy';
 import { NgxLinkifyjsModule } from 'ngx-linkifyjs';
 import { InterventionAskedPipe } from './shared/pipes/intervention-asked';
+import { MiniatureComponent } from './shared/components/miniature/miniature.component';
 
 @NgModule({
   declarations: [
