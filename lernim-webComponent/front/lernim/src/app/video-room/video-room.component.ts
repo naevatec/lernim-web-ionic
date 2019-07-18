@@ -6,6 +6,7 @@ import { OpenVidu, Publisher, Session, SignalOptions, VideoElementEvent, StreamE
 import { DialogErrorComponent } from '../shared/components/dialog-error/dialog-error.component';
 import { OpenViduLayout, OpenViduLayoutOptions } from '../shared/layout/openvidu-layout';
 import { UserModel } from '../shared/models/user-model';
+import { UserMiniature } from  '../shared/models/user-miniature';
 import { InterventionAskedPipe } from '../shared/pipes/intervention-asked';
 import { OpenViduService } from '../shared/services/open-vidu.service';
 import { ChatComponent } from '../shared/components/chat/chat.component';
@@ -46,15 +47,19 @@ export class VideoRoomComponent implements OnInit, OnDestroy {
   // OpenVidu Objets
   OV: OpenVidu;
   session: Session;
+  miniSession: Session;
   openviduLayout: OpenViduLayout;
   openviduLayoutOptions: OpenViduLayoutOptions;
+  miniatureStream: StreamManager;
   mainStreamManager: StreamManager;
   extraStreamManager: StreamManager;
   teacherStream: StreamManager;
   teacherConnection: Connection;
   OVConnections: Connection[] = [];
   OVPublisher: Publisher;
+  miniPublisher: Publisher;
   userChat: UserModel;
+  usersMiniatures: UserMiniature[] = [];
 
   // Join form
   mySessionId: string;
@@ -151,6 +156,10 @@ export class VideoRoomComponent implements OnInit, OnDestroy {
   joinToSession() {
     this.OV = new OpenVidu();
     this.session = this.OV.initSession();
+    if (this.role !== 'TEACHER')
+    	this.miniSession = this.OV.initSession ();
+    else
+    	this.miniSession = null;
     this.subscribeToUserChanged();
     this.subscribeToStreamCreated();
     this.subscribedToStreamDestroyed();
@@ -304,10 +313,9 @@ export class VideoRoomComponent implements OnInit, OnDestroy {
   private subscribeToStreamCreated() {
     this.session.on('streamCreated', (event: StreamEvent) => {
 
-      this.session.subscribe(event.stream, undefined);
-
       const streamManager: StreamManager = event.stream.streamManager;
       if (JSON.parse(streamManager.stream.connection.data).isTeacher) {
+        this.session.subscribe(event.stream, undefined);
         this.teacherStream = streamManager;
         if (this.studentAccessGranted) {
             this.extraStreamManager = streamManager;
@@ -315,11 +323,31 @@ export class VideoRoomComponent implements OnInit, OnDestroy {
             this.mainStreamManager = streamManager;
         }
       } else {
+        if (!(JSON.parse(streamManager.stream.connection.data).isMiniature)) {
+	  this.session.subscribe(event.stream, undefined);
           this.mainStreamManager = streamManager;
           this.extraStreamManager = this.teacherStream;
-          this.studentAccessGranted = true;
+	  this.studentAccessGranted = true;
+	} else {
+	  if (this.role === 'TEACHER') {
+	    this.session.subscribe(event.stream, undefined);
+
+	    // Add student miniature to the array
+	    this.usersMiniatures.push({ userName: JSON.parse(streamManager.stream.connection.data).userName, stream: streamManager, streamId: event.stream.streamId}); 
+	  }
+	}
       }
     });
+  }
+
+  private removeMiniature (streamId: string) {
+    var i = this.usersMiniatures.length;
+
+    while (i--) {
+      if (this.usersMiniatures[i].streamId === streamId) {
+	this.usersMiniatures.splice(i,1);
+      }
+    }
   }
 
   private subscribedToStreamDestroyed() {
@@ -341,6 +369,11 @@ export class VideoRoomComponent implements OnInit, OnDestroy {
         this.studentAccessGranted = false;
         this.mainStreamManager = this.teacherStream;
       }
+      if (this.role === 'TEACHER') {
+        if (JSON.parse(streamManager.stream.connection.data).isMiniature) {
+	  this.removeMiniature (event.stream.streamId);
+	}
+      }
     });
   }
 
@@ -360,12 +393,15 @@ export class VideoRoomComponent implements OnInit, OnDestroy {
           if (JSON.parse(event.connection.data).isTeacher) {
               this.teacherConnection = event.connection;
               console.warn('Conection TEACHER: ' + this.teacherConnection);
-            }
+          }
       }
-      this.OVConnections.push(event.connection);
 
-      const uData: UserModel = JSON.parse(event.connection.data);
-      this.usersData.push(uData);
+      if (!(JSON.parse(event.connection.data).isMiniature)) {
+        this.OVConnections.push(event.connection);
+
+        const uData: UserModel = JSON.parse(event.connection.data);
+        this.usersData.push(uData);
+      }
     });
 
   }
@@ -459,7 +495,7 @@ export class VideoRoomComponent implements OnInit, OnDestroy {
       if (this.role === 'TEACHER') {
         this.openViduSrv.getToken(this.mySessionId, this.openviduServerUrl, this.openviduSecret)
         .then((token) => {
-          this.session.connect(token, { userName: this.myUserName, isTeacher: true })
+          this.session.connect(token, { userName: this.myUserName, isTeacher: true, isMiniature: false })
           .then(() => {
             this.connectWebCam();
             this.publish();
@@ -479,8 +515,18 @@ export class VideoRoomComponent implements OnInit, OnDestroy {
       } else {
         this.openViduSrv.getOnlyToken(this.mySessionId, this.openviduServerUrl, this.openviduSecret)
         .then((token) => {
-          this.session.connect(token, { userName: this.myUserName, isTeacher: false });
-          this.student = true;
+          this.session.connect(token, { userName: this.myUserName, isTeacher: false, isMiniature: false });
+	  this.student = true;
+	  this.miniSession.connect(token, { userName: this.myUserName, isTeacher: false, isMiniature: true })
+	  .then(() => {
+	    this.connectMiniatureWebCam();
+	    this.publishMiniature();
+	  })
+	  .catch((error) => {
+	    this.error.emit({ error: error.error, messgae: error.message, code: error.code, status: error.status });
+	    console.log('There was an error connecting to the session to send miniature:', error.code, error.message);
+	     this.openDialogError('There was an error connecting to the session to send miniature:', error.message);
+	  });
         })
         .catch((error) => {
           this.error.emit({ error: error.error, messgae: error.message, code: error.code, status: error.status });
@@ -493,7 +539,7 @@ export class VideoRoomComponent implements OnInit, OnDestroy {
 
   private connect(token: string, roleTeacher: boolean): void {
     if (roleTeacher === true) {
-      this.session.connect(token, { userName: this.myUserName, isTeacher: true })
+      this.session.connect(token, { userName: this.myUserName, isTeacher: true, isMiniature: false })
       .then(() => {
         this.connectWebCam();
         this.publish();
@@ -505,7 +551,7 @@ export class VideoRoomComponent implements OnInit, OnDestroy {
         this.openDialogError('There was an error connecting to the session:', error.message);
       });
     } else {
-      this.session.connect(token, { userName: this.myUserName, isTeacher: false })
+      this.session.connect(token, { userName: this.myUserName, isTeacher: false, isMiniature: false })
       .then(() => {
         this.student = true;
         this.joinSession.emit();
@@ -530,7 +576,22 @@ export class VideoRoomComponent implements OnInit, OnDestroy {
       insertMode: 'APPEND',
       mirror: true,
     });
-  }
+ }
+
+
+ private connectMiniatureWebCam(): void {
+   this.miniPublisher = this.OV.initPublisher(undefined, {
+     audioSource: undefined,
+     videoSource: undefined,
+     publishAudio: true,
+     publishVideo: true,
+     resolution: '160x120',
+     frameRate: 1,
+     insertMode: 'APPEND',
+     mirror: true,
+   });
+ }
+
 
   private publish() {
     this.OVPublisher.on('streamCreated', (event: StreamEvent) => {
@@ -557,6 +618,25 @@ export class VideoRoomComponent implements OnInit, OnDestroy {
       (<HTMLElement>this.mainStreamManager.videos[0].video).parentElement.classList.remove('custom-class');
     });
   }
+
+  private publishMiniature() {
+    this.miniPublisher.on('streamCreated', (event: StreamEvent) => {
+      console.warn('OpenVidu miniature stream created by Publisher: ', event.stream);
+
+      const streamManager: StreamManager = event.stream.streamManager;
+
+      if ((JSON.parse(streamManager.stream.connection.data).userName === this.myUserName) &&
+          (JSON.parse(streamManager.stream.connection.data).isMiniature)) {
+          this.miniatureStream = streamManager;
+      }
+    });
+
+    this.miniSession.publish(this.miniPublisher);
+    this.miniPublisher.on('streamPlaying', () => {
+      console.info('OpenVidu miniature published');
+    });
+  }
+
 
   private unpublish() {
     this.session.unpublish(this.OVPublisher);

@@ -5,6 +5,7 @@ export class UserModel {
   public isTeacher: boolean;
   public interventionRequired = false;
   public accessGranted = false;
+  public isMiniature = false;
 
   constructor(userName: string, isTeacher: boolean) {
       this.userName = userName;
