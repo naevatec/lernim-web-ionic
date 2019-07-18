@@ -1,5 +1,5 @@
 <div id="videoRoomNavBar">
-  
+
   <mat-toolbar id="header" role="heading" [class.headerLight]="lightTheme">
 
     <div id="navSessionInfo">
@@ -12,13 +12,13 @@
       </div>
     </div>
     <div id="navButtons" align="center">
-      
+
       <button mat-icon-button (click)="screenShare()" *ngIf="teacher && !this.screenShareActive && !this.studentAccessGranted" id="navScreenButton">
         <mat-icon matTooltip="Choose screen" >screen_share</mat-icon>
       </button>
       <button mat-icon-button (click)="screenShareDisabled()" *ngIf="teacher && this.screenShareActive">
         <mat-icon matTooltip="Stop screen share" color="warn">stop_screen_share</mat-icon>
-      </button> 
+      </button>
       <button mat-icon-button (click)="exitSession()" id="navLeaveButton">
         <mat-icon color="warn" matTooltip="Leave the session">power_settings_new</mat-icon>
       </button>
@@ -32,8 +32,8 @@
       <button mat-icon-button *ngIf="student && !this.myStudentAccessGranted" (click)="askForIntervention()" id="navMicButton">
         <mat-icon matTooltip="ask For Intervention">{{interventionIcon}}</mat-icon>
       </button>
-      <div class= "icon-button" *ngIf= "teacher">
-        <div class= "mat-icon-button" *ngFor="let userData of this.usersData | interventionAskedFilter ; let i = index" >
+      <div class="icon-button" *ngIf="teacher">
+        <div class="mat-icon-button" *ngFor="let userData of this.usersData | interventionAskedFilter ; let i = index">
           |
           <button mat-icon-button *ngIf= "!studentAccessGranted || userData.accessGranted" (click)="grantIntervention(!studentAccessGranted, userData)" id="navCamButton">
             <mat-icon *ngIf="this.studentAccessGranted" color="warn" matTooltip="{{userData.userName}}">cancel</mat-icon>
@@ -62,4 +62,6 @@
       <chat-component #chatComponent [usersData]="this.usersData" [user]="this.userChat" [session]= "this.session" [chatDisplay]="chatDisplay" [lightTheme]="lightTheme" [messageList]="messageList" (closeChat)="toggleChat(undefined)"></chat-component>
     </div>
   </div>
+
+  <app-miniature [amITeacher]="teacher" [students]="students"></app-miniature>
 </div>

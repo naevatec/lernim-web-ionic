@@ -38,6 +38,7 @@ import { InterventionAskedPipe } from './shared/pipes/intervention-asked';
     DashboardComponent,
     StreamComponent,
     ChatComponent,
+    MiniatureComponent,
     DialogExtensionComponent,
     OpenViduVideoComponent,
     DialogErrorComponent,
