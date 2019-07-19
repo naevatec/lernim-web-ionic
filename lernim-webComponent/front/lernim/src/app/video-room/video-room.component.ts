@@ -157,7 +157,7 @@ export class VideoRoomComponent implements OnInit, OnDestroy {
     this.OV = new OpenVidu();
     this.miniOV = new OpenVidu();
     this.session = this.OV.initSession();
-    if (this.role !== 'TEACHER') {
+    if (this.roleTeacher === false) {
       this.miniSession = this.miniOV.initSession();
     } else {
       this.miniSession = null;
@@ -175,9 +175,15 @@ export class VideoRoomComponent implements OnInit, OnDestroy {
   exitSession() {
     if (this.session) {
       this.session.disconnect();
+
+      if (!!this.miniSession) {
+        this.miniSession.disconnect();
+      }
     }
     this.session = null;
+    this.miniSession = null;
     this.OV = null;
+    this.miniOV = null;
     this.screenShareActive = false;
     this.router.navigate(['']);
     this.leaveSession.emit();
@@ -303,14 +309,22 @@ export class VideoRoomComponent implements OnInit, OnDestroy {
     this.route.params.subscribe((params: Params) => {
       this.mySessionId = params.roomName !== undefined ? params.roomName : this.sessionName;
       this.myUserName = this.user || 'OpenVidu_User' + Math.floor(Math.random() * 100);
-      this.role = localStorage.getItem('role');
-      console.log('ROL: ' + this.role);
+
+      switch (localStorage.getItem('role')) {
+        case 'true':
+          this.roleTeacher = true;
+          break;
+        case 'false':
+          this.roleTeacher = false;
+          break;
+      }
+      console.log('ROL: ' + (this.roleTeacher ? 'TEACHER' : 'STUDENT'));
     });
   }
 
   private subscribeToStreamCreated() {
     this.session.on('streamCreated', (event: StreamEvent) => {
-      let subscriber = this.session.subscribe(event.stream, undefined);
+      const subscriber = this.session.subscribe(event.stream, undefined);
 
       const streamManager: StreamManager = event.stream.streamManager;
       if (JSON.parse(streamManager.stream.connection.data).isTeacher) {
@@ -326,7 +340,7 @@ export class VideoRoomComponent implements OnInit, OnDestroy {
           this.extraStreamManager = this.teacherStream;
           this.studentAccessGranted = true;
         } else {
-          if (this.role === 'TEACHER') {
+          if (this.roleTeacher === true) {
 
             // Add student miniature to the array
             this.usersMiniatures.push({
@@ -343,7 +357,7 @@ export class VideoRoomComponent implements OnInit, OnDestroy {
   }
 
   private removeMiniature(streamId: string) {
-    var i = this.usersMiniatures.length;
+    let i = this.usersMiniatures.length;
 
     while (i--) {
       if (this.usersMiniatures[i].streamId === streamId) {
@@ -371,7 +385,7 @@ export class VideoRoomComponent implements OnInit, OnDestroy {
         this.studentAccessGranted = false;
         this.mainStreamManager = this.teacherStream;
       }
-      if (this.role === 'TEACHER') {
+      if (this.roleTeacher === true) {
         if (JSON.parse(streamManager.stream.connection.data).isMiniature) {
           this.removeMiniature(event.stream.streamId);
         }
@@ -428,7 +442,7 @@ export class VideoRoomComponent implements OnInit, OnDestroy {
 
   private subscribeToSignals() {
     // Signals
-    if (this.role !== 'TEACHER' || this.roleTeacher === false) {
+    if (this.roleTeacher === false) {
       this.session.on('signal:grantIntervention', (msg: SignalEvent) => {
         if (msg.data === 'true') {
           // Publish
@@ -449,7 +463,7 @@ export class VideoRoomComponent implements OnInit, OnDestroy {
       });
     }
 
-    if (this.role === 'TEACHER' || this.roleTeacher === true) {
+    if (this.roleTeacher === true) {
       this.session.on('signal:askIntervention', (msg: SignalEvent) => {
         const from: Connection = msg.from;
         const petition: boolean = JSON.parse(msg.data).interventionRequired;
@@ -494,7 +508,7 @@ export class VideoRoomComponent implements OnInit, OnDestroy {
     if (this.token) {
       this.connect(this.token, this.roleTeacher);
     } else {
-      if (this.role === 'TEACHER') {
+      if (this.roleTeacher === true) {
         this.openViduSrv.getToken(this.mySessionId, this.openviduServerUrl, this.openviduSecret)
         .then((token) => {
           this.session.connect(token, {

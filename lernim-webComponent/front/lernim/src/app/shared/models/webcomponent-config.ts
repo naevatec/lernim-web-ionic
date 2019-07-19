@@ -1,6 +1,7 @@
 export interface ISessionCongif {
-    sessionName: string;
-    user: string;
-    token: string;
-    roleTeacher: boolean;
+  sessionName: string;
+  user: string;
+  url: string;
+  secret: string;
+  roleTeacher: boolean;
 }

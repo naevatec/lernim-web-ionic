@@ -15,7 +15,7 @@
 /projects/openvidu-angular/src/lib/app-routing.module.ts
 
 # IDEs and editors
-/.idea
+.idea/*
 .project
 .classpath
 .c9/

@@ -5,16 +5,16 @@ import { VideoRoomComponent } from '../video-room/video-room.component';
 @Component({
   selector: 'app-web-component',
   templateUrl: './web-component.component.html',
-  styleUrls: ['./web-component.component.css'],
+  styleUrls: ['./web-component.component.css']
 })
 export class WebComponentComponent implements OnInit {
   _sessionName: string;
   _user: string;
   _token: string;
   _roleTeacher: boolean;
+  _openviduServerUrl: string;
+  _openviduSecret: string;
 
-  @Input() openviduServerUrl: string;
-  @Input() openviduSecret: string;
   @Input() theme: string;
   @Output() joinSession = new EventEmitter<any>();
   @Output() leaveSession = new EventEmitter<any>();
@@ -24,37 +24,33 @@ export class WebComponentComponent implements OnInit {
 
   public display = false;
 
-  constructor() {}
+  constructor() {
+  }
 
-  @Input('sessionConfig')
-  set sessionConfig(config: any) {
-    let sessionConfig: ISessionCongif;
-    console.log('Session config input ', config);
-    sessionConfig = config;
-    if (typeof config === 'string') {
-      sessionConfig = JSON.parse(config);
-    }
+  @Input('sessionConfig') set sessionConfig(sessionConfig: ISessionCongif) {
     if (sessionConfig) {
       this._sessionName = sessionConfig.sessionName;
       this._user = sessionConfig.user;
-      this._token = sessionConfig.token;
+      this._openviduServerUrl = sessionConfig.url;
+      this._openviduSecret = sessionConfig.secret;
       this._roleTeacher = sessionConfig.roleTeacher;
+
       if (this.validateParameters()) {
+        console.log('valid');
         this.display = true;
       }
     } else {
       this.videoRoom.exitSession();
+      this.display = false;
     }
   }
 
-  ngOnInit() {}
+  ngOnInit() {
+  }
 
   validateParameters(): boolean {
-    if ((this._sessionName && this.openviduServerUrl && this.openviduSecret && this._user /*&& this._roleTeacher*/)
-    || (this._token && this._user /*&& this._roleTeacher*/)) {
-      return true;
-    }
-    return false;
+    return !!(this._sessionName && this._openviduServerUrl && this._openviduSecret && this._user);
+
   }
 
   emitJoinSessionEvent(event): void {
