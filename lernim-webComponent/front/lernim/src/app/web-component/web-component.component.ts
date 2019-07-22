@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
-import { ISessionCongif } from '../shared/models/webcomponent-config';
+import { ISessionConfig } from '../shared/models/webcomponent-config';
 import { VideoRoomComponent } from '../video-room/video-room.component';
 
 @Component({
@@ -12,6 +12,7 @@ export class WebComponentComponent implements OnInit {
   _user: string;
   _token: string;
   _roleTeacher: boolean;
+  _students: string[];
   _openviduServerUrl: string;
   _openviduSecret: string;
 
@@ -27,17 +28,20 @@ export class WebComponentComponent implements OnInit {
   constructor() {
   }
 
-  @Input('sessionConfig') set sessionConfig(sessionConfig: ISessionCongif) {
+  @Input('sessionConfig') set sessionConfig(sessionConfig: ISessionConfig) {
     if (sessionConfig) {
       this._sessionName = sessionConfig.sessionName;
       this._user = sessionConfig.user;
-      this._openviduServerUrl = sessionConfig.url;
-      this._openviduSecret = sessionConfig.secret;
+      this._openviduServerUrl = sessionConfig.ov_url;
+      this._openviduSecret = sessionConfig.ov_secret;
+      this._students = sessionConfig.students;
       this._roleTeacher = sessionConfig.roleTeacher;
 
       if (this.validateParameters()) {
-        console.log('valid');
+        console.log('Valid parameters');
         this.display = true;
+      } else {
+        console.log('Incorrect parameters');
       }
     } else {
       this.videoRoom.exitSession();
@@ -54,11 +58,13 @@ export class WebComponentComponent implements OnInit {
   }
 
   emitJoinSessionEvent(event): void {
+    console.log('Joining session');
     this.joinSession.emit(event);
     this.videoRoom.checkSizeComponent();
   }
 
   emitLeaveSessionEvent(event): void {
+    console.log('Leaving session');
     this.leaveSession.emit(event);
     this.display = false;
   }

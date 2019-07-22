@@ -25,11 +25,13 @@ function joinSession() {
     const roleTeacher = !!teacher.checked;
 
     const webComponent = document.querySelector("openvidu-teaching-webcomponent");
+    console.log(webComponent);
     webComponent.sessionConfig = {
         sessionName,
         user,
-        url: OPENVIDU_SERVER_URL,
-        secret: OPENVIDU_SERVER_SECRET,
+        ov_url: OPENVIDU_SERVER_URL,
+        ov_secret: OPENVIDU_SERVER_SECRET,
+        students: null,
         roleTeacher
     };
 }
