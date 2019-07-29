@@ -4,7 +4,7 @@ header {
     background-color: rgb(16, 145, 138);
     padding: 0.5em;
     border-bottom-style: groove;
-    border-width: 3px; 
+    border-width: 3px;
     border-bottom-color: rgb(10, 229, 236);
 }
 
@@ -15,7 +15,7 @@ footer {
     width: 100%;
     padding: 0.5em 0;
     border-top-style: ridge;
-    border-width: 2px; 
+    border-width: 2px;
     border-top-color: rgb(10, 229, 236);
 }
 
@@ -43,7 +43,7 @@ header p span {
 
 .button {
     width: 200px;
-    height: 25px; 
+    height: 25px;
     cursor: pointer;
 }
 
@@ -59,7 +59,7 @@ header p span {
 }
 
 label {
-    width: 120px;
+    width: 160px;
 }
 
 #main {
@@ -70,7 +70,7 @@ label {
 }
 
 #logo {
-    text-align: center; 
+    text-align: center;
 }
 
 #login {
@@ -85,3 +85,8 @@ a:link, a:visited, a:active {
     color: #000;
 }
 
+openvidu-teaching-webcomponent {
+    display: block;
+    height: 100%;
+    width: 100%;
+}

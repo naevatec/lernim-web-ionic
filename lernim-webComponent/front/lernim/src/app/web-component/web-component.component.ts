@@ -1,6 +1,7 @@
 import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { ISessionConfig } from '../shared/models/webcomponent-config';
-import { VideoRoomComponent } from '../video-room/video-room.component';
+import { VideoRoomTeacherComponent } from '../video-room-teacher/video-room-teacher.component';
+import { VideoRoomStudentComponent } from '../video-room-student/video-room-student.component';
 
 @Component({
   selector: 'app-web-component',
@@ -9,8 +10,7 @@ import { VideoRoomComponent } from '../video-room/video-room.component';
 })
 export class WebComponentComponent implements OnInit {
   _sessionName: string;
-  _user: string;
-  _token: string;
+  _userName: string;
   _roleTeacher: boolean;
   _students: string[];
   _openviduServerUrl: string;
@@ -21,7 +21,8 @@ export class WebComponentComponent implements OnInit {
   @Output() leaveSession = new EventEmitter<any>();
   @Output() error = new EventEmitter<any>();
 
-  @ViewChild('videoRoom') videoRoom: VideoRoomComponent;
+  @ViewChild('videoRoomStudent') videoRoomStudent: VideoRoomStudentComponent;
+  @ViewChild('videoRoomTeacher') videoRoomTeacher: VideoRoomTeacherComponent;
 
   public display = false;
 
@@ -31,7 +32,7 @@ export class WebComponentComponent implements OnInit {
   @Input('sessionConfig') set sessionConfig(sessionConfig: ISessionConfig) {
     if (sessionConfig) {
       this._sessionName = sessionConfig.sessionName;
-      this._user = sessionConfig.user;
+      this._userName = sessionConfig.user;
       this._openviduServerUrl = sessionConfig.ov_url;
       this._openviduSecret = sessionConfig.ov_secret;
       this._students = sessionConfig.students;
@@ -44,7 +45,6 @@ export class WebComponentComponent implements OnInit {
         console.log('Incorrect parameters');
       }
     } else {
-      this.videoRoom.exitSession();
       this.display = false;
     }
   }
@@ -53,14 +53,13 @@ export class WebComponentComponent implements OnInit {
   }
 
   validateParameters(): boolean {
-    return !!(this._sessionName && this._openviduServerUrl && this._openviduSecret && this._user);
+    return !!(this._sessionName && this._openviduServerUrl && this._openviduSecret && this._userName);
 
   }
 
   emitJoinSessionEvent(event): void {
     console.log('Joining session');
     this.joinSession.emit(event);
-    this.videoRoom.checkSizeComponent();
   }
 
   emitLeaveSessionEvent(event): void {

@@ -1,21 +1,21 @@
 import { BrowserModule } from '@angular/platform-browser';
-import { NgModule, Injector } from '@angular/core';
+import { Injector, NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import {
+  MatBadgeModule,
   MatButtonModule,
   MatCardModule,
-  MatToolbarModule,
+  MatCheckboxModule,
+  MatDialogModule,
+  MatFormFieldModule,
   MatIconModule,
   MatInputModule,
-  MatFormFieldModule,
-  MatDialogModule,
-  MatTooltipModule,
-  MatBadgeModule,
+  MatToolbarModule,
+  MatTooltipModule
 } from '@angular/material';
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './/app-routing.module';
-import { VideoRoomComponent } from './video-room/video-room.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { OpenViduService } from './shared/services/open-vidu.service';
 import { StreamComponent } from './shared/components/stream/stream.component';
@@ -31,12 +31,16 @@ import { LinkifyPipe } from './shared/pipes/linkfy';
 import { NgxLinkifyjsModule } from 'ngx-linkifyjs';
 import { InterventionAskedPipe } from './shared/pipes/intervention-asked';
 import { MiniatureComponent } from './shared/components/miniature/miniature.component';
+import { VideoRoomTeacherComponent } from './video-room-teacher/video-room-teacher.component';
+import { VideoRoomSwitchComponent } from './video-room-switch/video-room-switch.component';
+import { VideoRoomStudentComponent } from './video-room-student/video-room-student.component';
 
 @NgModule({
-  declarations: [
-    AppComponent,
-    VideoRoomComponent,
+  declarations: [AppComponent,
+    VideoRoomStudentComponent,
+    VideoRoomTeacherComponent,
     DashboardComponent,
+    VideoRoomSwitchComponent,
     StreamComponent,
     ChatComponent,
     MiniatureComponent,
@@ -45,10 +49,8 @@ import { MiniatureComponent } from './shared/components/miniature/miniature.comp
     DialogErrorComponent,
     WebComponentComponent,
     LinkifyPipe,
-    InterventionAskedPipe
-  ],
-  imports: [
-    FormsModule,
+    InterventionAskedPipe],
+  imports: [FormsModule,
     ReactiveFormsModule,
     BrowserModule,
     BrowserAnimationsModule,
@@ -63,22 +65,23 @@ import { MiniatureComponent } from './shared/components/miniature/miniature.comp
     MatBadgeModule,
     AppRoutingModule,
     HttpClientModule,
-    NgxLinkifyjsModule.forRoot()
-  ],
-  entryComponents: [
-    DialogErrorComponent,
-    WebComponentComponent,
-  ],
+    NgxLinkifyjsModule.forRoot(),
+    MatCheckboxModule],
+  entryComponents: [DialogErrorComponent, WebComponentComponent],
   providers: [OpenViduService],
-  bootstrap: [AppComponent],
+  bootstrap: [AppComponent]
 })
 export class AppModule {
 
   constructor(private injector: Injector) {
     const strategyFactory = new ElementZoneStrategyFactory(WebComponentComponent, this.injector);
-    const element = createCustomElement(WebComponentComponent, { injector: this.injector, strategyFactory });
+    const element = createCustomElement(WebComponentComponent, {
+      injector: this.injector,
+      strategyFactory
+    });
     customElements.define('openvidu-teaching-webcomponent', element);
   }
 
-  ngDoBootstrap() {}
+  ngDoBootstrap() {
+  }
 }

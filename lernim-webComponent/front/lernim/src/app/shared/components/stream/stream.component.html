@@ -1,7 +1,18 @@
-<div class="OT_widget-container" [class.participant-small]="this.small">
-  <div *ngIf="!onlyVideo" class="nickname pointer"><p class="name-p">{{getNicknameTag()}}</p></div>
-  <div *ngIf="!onlyVideo" id="statusIcons">
-    <mat-icon id="statusMic">{{publishAudioIcon}}</mat-icon>
+<div #mainElement [class.miniature]="isMiniature" class="OT_widget-container" [class.participant-small]="this.small">
+  <div *ngIf="!isMiniature" class="nickname pointer">
+    <p>{{user.userName}}</p>
   </div>
-  <ov-video #videoElement [streamManager]="streamManager" [mutedSound]="mutedSound"></ov-video>
+  <div id="statusIcons" [class.miniature]="isMiniature">
+    <div *ngIf="!isMiniature && highlightUserType && user.isTeacher" class="highlightTeacher">TEACHER</div>
+    <div *ngIf="!isMiniature && highlightUserType && !user.isTeacher" class="highlightMyself">MYSELF</div>
+    <mat-icon *ngIf="!isMiniature && user.publishingAudio">mic</mat-icon>
+    <mat-icon *ngIf="!user.publishingAudio" color="warn">mic_off</mat-icon>
+    <mat-icon *ngIf="!isMiniature && user.publishingVideo">videocam</mat-icon>
+    <mat-icon *ngIf="!isMiniature && !user.publishingVideo" color="warn">videocam_off</mat-icon>
+  </div>
+  <ov-video #videoComponent
+            *ngIf="streamManager"
+            [streamManager]="streamManager"
+            [mutedSound]="muted"
+            [hideVideo]="!user.publishingVideo"></ov-video>
 </div>

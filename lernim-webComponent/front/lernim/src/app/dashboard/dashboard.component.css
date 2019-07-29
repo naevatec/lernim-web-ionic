@@ -2,6 +2,7 @@
   background-color: transparent;
   color: #ffffff;
 }
+
 #header_img {
   max-width: 200px;
   margin-right: 10px;
@@ -25,10 +26,12 @@
 #ov_info {
   color: #ffffff;
 }
+
 #ov_img {
   max-width: 50%;
   margin: auto;
 }
+
 #card_content {
   height: 50%;
 }
@@ -46,11 +49,17 @@
   margin: auto;
   padding: 0px 5px;
 }
+
 @media (max-width: 700px) {
   #header_img {
     visibility: hidden;
   }
+
   #ov_img {
     max-width: 65%;
   }
+}
+
+.checkbox-block {
+  padding-bottom: 25px;
 }

@@ -1,12 +1,22 @@
-<app-video-room #videoRoom
-                *ngIf="display"
-                [theme]="theme"
-                [sessionName]="_sessionName"
-                [user]="_user"
-                [students]="_students"
-                [openviduServerUrl]="_openviduServerUrl"
-                [openviduSecret]="_openviduSecret"
-                [roleTeacher]="_roleTeacher"
-                (leaveSession)="emitLeaveSessionEvent($event)"
-                (joinSession)="emitJoinSessionEvent($event)"
-                (error)="emitErrorEvent($event)"></app-video-room>
+<app-video-room-student #videoRoomStudent
+                        *ngIf="display && !_roleTeacher"
+                        [theme]="theme"
+                        [sessionName]="_sessionName"
+                        [userName]="_userName"
+                        [openviduServerUrl]="_openviduServerUrl"
+                        [openviduSecret]="_openviduSecret"
+                        (leaveSession)="emitLeaveSessionEvent($event)"
+                        (joinSession)="emitJoinSessionEvent($event)"
+                        (error)="emitErrorEvent($event)"></app-video-room-student>
+
+<app-video-room-teacher #videoRoomTeacher
+                        *ngIf="display && _roleTeacher"
+                        [theme]="theme"
+                        [sessionName]="_sessionName"
+                        [userName]="_userName"
+                        [students]="_students"
+                        [openviduServerUrl]="_openviduServerUrl"
+                        [openviduSecret]="_openviduSecret"
+                        (leaveSession)="emitLeaveSessionEvent($event)"
+                        (joinSession)="emitJoinSessionEvent($event)"
+                        (error)="emitErrorEvent($event)"></app-video-room-teacher>

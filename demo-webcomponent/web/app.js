@@ -1,5 +1,5 @@
 var OPENVIDU_SERVER_URL = "https://" + location.hostname + ":4443";
-var OPENVIDU_SERVER_SECRET = "MY_SECRET";
+var OPENVIDU_SERVER_SECRET = "4p1x3ls";
 
 $(document).ready(() => {
     const webComponent = document.querySelector("openvidu-teaching-webcomponent");

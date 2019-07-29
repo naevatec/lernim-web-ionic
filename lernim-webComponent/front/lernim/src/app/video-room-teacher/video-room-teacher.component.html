@@ -1,0 +1,107 @@
+<div #videoRoom id="videoRoom">
+  <mat-toolbar class="toolbar" role="heading" [class.headerLight]="lightTheme">
+    <div class="left">
+      <img class="header_img"
+           *ngIf="!lightTheme"
+           alt="OpenVidu Logo"
+           src="https://raw.githubusercontent.com/OpenVidu/openvidu-call/master/front/openvidu-call/src/assets/images/openvidu_logo.png">
+      <img class="header_img"
+           *ngIf="lightTheme"
+           alt="OpenVidu Logo"
+           src="https://raw.githubusercontent.com/OpenVidu/openvidu-call/master/front/openvidu-call/src/assets/images/openvidu_logo_grey.png">
+      <div class="title" *ngIf="!compact" [class.titleContentLight]="lightTheme">
+        <span>{{sessionName}} - {{userName}}</span>
+      </div>
+    </div>
+
+    <div class="center">
+      <button mat-icon-button (click)="toggleCamera()">
+        <mat-icon *ngIf="!teacherUser.publishingVideo" matTooltip="Publish video">videocam</mat-icon>
+        <mat-icon *ngIf="teacherUser.publishingVideo" color="warn" matTooltip="Unpublish video">videocam_off</mat-icon>
+      </button>
+      <button mat-icon-button (click)="toggleMicrophone()">
+        <mat-icon *ngIf="!teacherUser.publishingAudio" matTooltip="Publish audio">mic</mat-icon>
+        <mat-icon *ngIf="teacherUser.publishingAudio" color="warn" matTooltip="Unpublish audio">mic_off</mat-icon>
+      </button>
+      <button mat-icon-button (click)="exitSession()">
+        <mat-icon color="warn" matTooltip="Leave the session">power_settings_new</mat-icon>
+      </button>
+      <button mat-icon-button (click)="shareScreen()" *ngIf="!teacherUser.isSharedScreenActive">
+        <mat-icon matTooltip="Choose screen">screen_share</mat-icon>
+      </button>
+      <button mat-icon-button (click)="stopSharingScreen()" *ngIf="teacherUser.isSharedScreenActive">
+        <mat-icon matTooltip="Stop screen share" color="warn">stop_screen_share</mat-icon>
+      </button>
+      <button mat-icon-button (click)="toggleFullscreen()">
+        <mat-icon *ngIf="!isFullScreen" matTooltip="Enter fullscreen">fullscreen</mat-icon>
+        <mat-icon *ngIf="isFullScreen" matTooltip="Exit fullscreen">fullscreen_exit</mat-icon>
+      </button>
+      <button mat-icon-button *ngIf="false && anyUnmutedMiniature" (click)="muteAllStudents()">
+        <mat-icon color="accent" matTooltip="Mute all miniatures">
+          volume_off
+        </mat-icon>
+      </button>
+    </div>
+
+    <div class="right" *ngIf="!compact">
+      <button mat-icon-button *ngIf="interventionRequiredCount > 0">
+        <mat-icon matBadge="{{interventionRequiredCount}}"
+                  matBadgeColor="accent"
+                  matTooltip="Some students request to intervene">
+          record_voice_over
+        </mat-icon>
+      </button>
+      <!--   Add event: (click)="toggleShowMiniatures()"   -->
+      <button mat-icon-button>
+        <mat-icon matBadge="{{chatUserData.length}}" matBadgeColor="accent">remove_red_eye</mat-icon>
+      </button>
+      <button mat-icon-button (click)="toggleChat()">
+        <div *ngIf="chatMessageReceived && !showChat" class="point" [class.pointLight]="lightTheme"></div>
+        <mat-icon matTooltip="Chat">question_answer</mat-icon>
+      </button>
+    </div>
+    <div class="right" *ngIf="compact"></div>
+  </mat-toolbar>
+
+  <app-dialog-extension *ngIf="showDialogToInstallScreenSharingExtension"
+                        [nickname]="userName"
+                        (cancel)="toggleInstallScreenSharingExtensionDialog()"></app-dialog-extension>
+
+  <div #layout class="bounds" [class.boundsLight]="lightTheme">
+    <!--  Teacher  -->
+    <div [ngClass]="[VIDEO_ELEMENT_CLASS]">
+      <app-stream-component [streamManager]="teacherStream"
+                            [user]="teacherUser"
+                            [muted]="true"
+                            [highlightUserType]="true"
+                            [lightTheme]="lightTheme"></app-stream-component>
+    </div>
+
+    <!--  Other students -->
+    <ng-container *ngFor="let miniature of grantedUsers">
+      <div [ngClass]="[VIDEO_ELEMENT_CLASS]">
+        <app-stream-component [streamManager]="miniature.stream"
+                              [user]="miniature.user"
+                              [lightTheme]="lightTheme"></app-stream-component>
+      </div>
+    </ng-container>
+
+    <!--  Chat  -->
+    <div [ngClass]="[VIDEO_ELEMENT_CLASS]" [style.display]="showChat ? 'block' : 'none'" *ngIf="teacherUser">
+      <app-chat-component #chatComponent
+                          [teacher]="teacherUser"
+                          [user]="teacherUser"
+                          [otherUsers]="chatUserData"
+                          [session]="session"
+                          [lightTheme]="lightTheme"
+                          [messageList]="chatMessageList"
+                          (closeChat)="toggleChat(undefined)"></app-chat-component>
+    </div>
+  </div>
+
+  <app-miniature *ngIf="showMiniatures"
+                 [students]="usersMiniatures"
+                 [canGrantAccess]="grantedUsers.length < MAX_ALLOWED_GRANTED_USERS"
+                 (miniatureResize)="onMiniatureResize($event)"
+                 (grantAccess)="grantIntervention($event)"></app-miniature>
+</div>

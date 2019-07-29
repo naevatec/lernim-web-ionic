@@ -1,15 +1,27 @@
 import { StreamManager } from 'openvidu-browser';
-  
+import { UserModel } from './user-model';
+
 export class UserMiniature {
 
-  public userName: string;
+  public user: UserModel;
   public stream: StreamManager;
-  public streamId: string;
+  public muted = true;
+  public expanded = false;
 
-  constructor(userName: string, stream: StreamManager, streamId: string) {
-      this.userName = userName;
-      this.stream = stream;
-      this.streamId = streamId;
 
+  constructor(user: UserModel, stream: StreamManager) {
+    this.user = user;
+    this.stream = stream;
+  }
+
+  /**
+   * Reset the object to its default values. It does not replace userName nor isTeacher.
+   */
+  public reset(): void {
+    this.user.reset();
+
+    this.stream = null;
+    this.muted = true;
+    this.expanded = false;
   }
 }

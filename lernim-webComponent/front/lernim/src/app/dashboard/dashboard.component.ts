@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { AbstractControl, FormBuilder, FormGroup, ValidationErrors, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 
 @Component({
@@ -16,17 +16,142 @@ export class DashboardComponent implements OnInit {
 
   ngOnInit() {
     this.roomForm = this.formBuilder.group({
-      roomName: ['', Validators.compose([Validators.required])],
-      role: ['', Validators.compose([Validators.required])]
-
+      userName: [this.generateName(), Validators.compose([this.whitespacesValidation])],
+      roomName: ['SessionA', Validators.compose([this.whitespacesValidation])],
+      isTeacher: [false, Validators.compose([])]
     });
+  }
+
+  /**
+   * Validates the inputs to check that they do not have whitespaces.
+   */
+  private whitespacesValidation(control: AbstractControl): ValidationErrors | null {
+    const value: string = control.value;
+    const position = value.indexOf(' ');
+
+    if (position >= 0) {
+      return {key: 'Parameters don\'t allow whitespaces inside'};
+    } else {
+      return null;
+    }
   }
 
   public goToVideoCall() {
     if (this.roomForm.valid) {
-      const roomName = this.roomForm.value.roomName.replace(/ /g, '-'); // replace white spaces by -
-      localStorage.setItem('role', this.roomForm.value.role === 'TEACHER' ? 'true' : 'false');
-      this.router.navigate(['/', roomName]);
+      const userName = this.roomForm.value.userName;
+      const roomName = this.roomForm.value.roomName;
+      const role = this.roomForm.value.isTeacher ? 't' : 's';
+
+      this.router.navigate(['/', role, roomName, userName]);
     }
+  }
+
+  // NAME GENERATOR -----------------------------------------------------------
+
+
+  private nouns = ['adamant',
+    'adroit',
+    'amatory',
+    'animistic',
+    'antic',
+    'arcadian',
+    'baleful',
+    'bellicose',
+    'bilious',
+    'boorish',
+    'calamitous',
+    'caustic',
+    'cerulean',
+    'comely',
+    'concomitant',
+    'contumacious',
+    'corpulent',
+    'crapulous',
+    'defamatory',
+    'didactic',
+    'dilatory',
+    'dowdy',
+    'efficacious',
+    'effulgent',
+    'egregious',
+    'endemic',
+    'equanimous',
+    'execrable',
+    'fastidious',
+    'feckless',
+    'fecund',
+    'friable',
+    'fulsome',
+    'garrulous',
+    'guileless',
+    'gustatory',
+    'heuristic',
+    'histrionic',
+    'hubristic',
+    'incendiary',
+    'insidious',
+    'insolent',
+    'intransigent',
+    'inveterate',
+    'invidious',
+    'irksome',
+    'jejune',
+    'jocular',
+    'judicious',
+    'lachrymose',
+    'limpid',
+    'loquacious',
+    'luminous',
+    'mannered',
+    'mendacious',
+    'meretricious',
+    'minatory',
+    'mordant',
+    'munificent',
+    'nefarious',
+    'noxious',
+    'obtuse',
+    'parsimonious',
+    'pendulous',
+    'pernicious',
+    'pervasive',
+    'petulant',
+    'platitudinous',
+    'precipitate',
+    'propitious',
+    'puckish',
+    'querulous',
+    'quiescent',
+    'rebarbative',
+    'recalcitant',
+    'redolent',
+    'rhadamanthine',
+    'risible',
+    'ruminative',
+    'sagacious',
+    'salubrious',
+    'sartorial',
+    'sclerotic',
+    'serpentine',
+    'spasmodic',
+    'strident',
+    'taciturn',
+    'tenacious',
+    'tremulous',
+    'trenchant',
+    'turbulent',
+    'turgid',
+    'ubiquitous',
+    'uxorious',
+    'verdant',
+    'voluble',
+    'voracious',
+    'wheedling',
+    'withering',
+    'zealous'];
+
+  generateName() {
+    const i = Math.floor(Math.random() * this.nouns.length);
+    return this.nouns[i] + '-user';
   }
 }

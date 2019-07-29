@@ -11,71 +11,107 @@ export class OpenViduService {
   URL_OV: string;
   MY_SECRET: string;
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) {
+  }
 
-  getToken(mySessionId: string, openviduServerUrl: string , openviduSecret: string): Promise<string> {
+  /**
+   * Gets a token from the session creating it if there's no one before.
+   */
+  getSessionToken(mySessionId: string, openviduServerUrl: string, openviduSecret: string): Promise<string> {
     return this.getCredentials().then(() => {
-      const ov_url = openviduServerUrl !== undefined ? openviduServerUrl : this.URL_OV;
-      const ov_secret = openviduSecret !== undefined ? openviduSecret : this.MY_SECRET;
-      return this.createSession(mySessionId, ov_url, ov_secret).then((sessionId: string) => {
-          return this.createToken(sessionId, ov_url, ov_secret);
+      const ov_url = openviduServerUrl || this.URL_OV;
+      const ov_secret = openviduSecret || this.MY_SECRET;
+      return this.getSession(mySessionId, ov_url, ov_secret).then((sessionExists) => {
+        if (sessionExists) {
+          return this.createToken(mySessionId, ov_url, ov_secret);
+        } else {
+          return this.createSession(mySessionId, ov_url, ov_secret).then((sessionId: string) => {
+            return this.createToken(sessionId, ov_url, ov_secret);
+          });
+        }
       });
     });
   }
 
-  getOnlyToken(mySessionId: string, openviduServerUrl: string , openviduSecret: string): Promise<string> {
+  getToken(mySessionId: string, openviduServerUrl: string, openviduSecret: string): Promise<string> {
     return this.getCredentials().then(() => {
-      const ov_url = openviduServerUrl !== undefined ? openviduServerUrl : this.URL_OV;
-      const ov_secret = openviduSecret !== undefined ? openviduSecret : this.MY_SECRET;
+      const ov_url = openviduServerUrl || this.URL_OV;
+      const ov_secret = openviduSecret || this.MY_SECRET;
+      return this.createSession(mySessionId, ov_url, ov_secret).then((sessionId: string) => {
+        return this.createToken(sessionId, ov_url, ov_secret);
+      });
+    });
+  }
+
+  getOnlyToken(mySessionId: string, openviduServerUrl: string, openviduSecret: string): Promise<string> {
+    return this.getCredentials().then(() => {
+      const ov_url = openviduServerUrl || this.URL_OV;
+      const ov_secret = openviduSecret || this.MY_SECRET;
       return this.createToken(mySessionId, ov_url, ov_secret);
+    });
+  }
+
+  getSession(sessionId: string, openviduServerUrl: string, openviduSecret: string) {
+    return new Promise((resolve, reject) => {
+
+      const options = {
+        headers: new HttpHeaders({
+          'Authorization': 'Basic ' + btoa('OPENVIDUAPP:' + openviduSecret),
+          'Content-Type': 'application/json'
+        })
+      };
+      return this.http.get<any>(openviduServerUrl + '/api/sessions/' + sessionId, options)
+      .pipe(catchError(error => {
+        resolve(false);
+        return observableThrowError(error);
+      }))
+      .subscribe(response => {
+        resolve(true);
+      });
     });
   }
 
   createSession(sessionId: string, openviduServerUrl: string, openviduSecret: string) {
     return new Promise((resolve, reject) => {
 
-      const body = JSON.stringify({ customSessionId: sessionId });
+      const body = JSON.stringify({customSessionId: sessionId});
       const options = {
         headers: new HttpHeaders({
           'Authorization': 'Basic ' + btoa('OPENVIDUAPP:' + openviduSecret),
-          'Content-Type': 'application/json',
+          'Content-Type': 'application/json'
         })
       };
       return this.http.post<any>(openviduServerUrl + '/api/sessions', body, options)
-        .pipe(
-          catchError(error => {
-            error.status === 409 ? resolve(sessionId) : reject(error);
-            return observableThrowError(error);
-          })
-        )
-        .subscribe(response => {
-          console.log(response);
-          resolve(response.id);
-        });
+      .pipe(catchError(error => {
+        error.status === 409 ? resolve(sessionId) : reject(error);
+        return observableThrowError(error);
+      }))
+      .subscribe(response => {
+        console.log(response);
+        resolve(response.id);
+      });
     });
   }
 
   createToken(sessionId: string, openviduServerUrl: string, openviduSecret: string): Promise<string> {
     return new Promise((resolve, reject) => {
 
-      const body = JSON.stringify({ session: sessionId });
+      const body = JSON.stringify({session: sessionId});
       const options = {
         headers: new HttpHeaders({
           'Authorization': 'Basic ' + btoa('OPENVIDUAPP:' + openviduSecret),
-          'Content-Type': 'application/json',
+          'Content-Type': 'application/json'
         })
       };
       return this.http.post<any>(openviduServerUrl + '/api/tokens', body, options)
-        .pipe(
-          catchError(error => {
-            reject(error);
-            return observableThrowError(error);
-          })
-        )
-        .subscribe(response => {
-          console.log(response);
-          resolve(response.token);
-        });
+      .pipe(catchError(error => {
+        reject(error);
+        return observableThrowError(error);
+      }))
+      .subscribe(response => {
+        console.log(response);
+        resolve(response.token);
+      });
     });
   }
 
@@ -87,8 +123,7 @@ export class OpenViduService {
         this.MY_SECRET = data.openviduCredentials.openvidu_secret;
         console.log('URL Environment', this.URL_OV);
         resolve();
-      },
-      (error) => {
+      }, (error) => {
         console.warn('Credentials file not found ');
         if (environment.openvidu_url) {
           console.warn('Getting from environment ');

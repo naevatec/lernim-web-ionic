@@ -1,419 +1,194 @@
 declare var $: any;
 
 export interface OpenViduLayoutOptions {
-  maxRatio: number;
-  minRatio: number;
-  fixedRatio: boolean;
-  animate: any;
-  bigClass: string;
-  bigPercentage: any;
-  bigFixedRatio: any;
-  bigMaxRatio: any;
-  bigMinRatio: any;
-  bigFirst: any;
+  elementClass: string; // The class attached to the video elements.
+  fillColumnsFirst: boolean; // Tries to fill the columns first and then the rows.
+  animate: boolean; // Whether you want to animate the transitions.
+}
+
+interface CustomVideoElement {
+  el: HTMLElement;
+  video: HTMLVideoElement;
+  ratio: number;
 }
 
 export class OpenViduLayout {
   private layoutContainer: HTMLElement;
-  private opts: OpenViduLayoutOptions;
+  private options: OpenViduLayoutOptions = {
+    elementClass: 'OT_video_element',
+    fillColumnsFirst: false,
+    animate: false
+  };
 
-  private fixAspectRatio(elem: HTMLVideoElement, width: number) {
-    const sub: HTMLVideoElement = <HTMLVideoElement>elem.querySelector('.OT_root');
-    if (sub) {
-      // If this is the parent of a subscriber or publisher then we need
-      // to force the mutation observer on the publisher or subscriber to
-      // trigger to get it to fix it's layout
-      const oldWidth = sub.style.width;
-      sub.style.width = width + 'px';
-      // sub.style.height = height + 'px';
-      sub.style.width = oldWidth || '';
-    }
+  /**
+   * Initializes the layout with a container and a group of options.
+   */
+  initLayoutContainer(container: HTMLElement, options: any): void {
+    this.layoutContainer = container;
+    this.setLayoutOptions(options);
   }
 
-  private positionElement(elem: HTMLVideoElement, x: number, y: number, width: number, height: number, animate: any) {
-    const targetPosition = {
-      left: x + 'px',
-      top: y + 'px',
-      width: width + 'px',
-      height: height + 'px',
-    };
-
-    this.fixAspectRatio(elem, width);
-
-    if (animate && $) {
-      $(elem).stop();
-      $(elem).animate(targetPosition, animate.duration || 200, animate.easing || 'swing', () => {
-        this.fixAspectRatio(elem, width);
-        if (animate.complete) {
-          animate.complete.call(this);
-        }
-      });
-    } else {
-      $(elem).css(targetPosition);
-    }
-    this.fixAspectRatio(elem, width);
+  /**
+   * Sets the layout options filling the undefined values with the previous ones.
+   */
+  setLayoutOptions(options: any): void {
+    this.options.elementClass = options.elementClass || this.options.elementClass;
+    this.options.fillColumnsFirst = options.fillColumnsFirst || this.options.fillColumnsFirst;
+    this.options.animate = options.animate || this.options.animate;
   }
 
-  private getVideoRatio(elem: HTMLVideoElement) {
-    if (!elem) {
-      return 3 / 4;
-    }
-    const video: HTMLVideoElement = <HTMLVideoElement>elem.querySelector('video');
-    if (video && video.videoHeight && video.videoWidth) {
-      return video.videoHeight / video.videoWidth;
-    } else if (elem.videoHeight && elem.videoWidth) {
-      return elem.videoHeight / elem.videoWidth;
-    }
-    return 3 / 4;
-  }
-
-  private getCSSNumber(elem: HTMLElement, prop: string) {
-    const cssStr = $(elem).css(prop);
-    return cssStr ? parseInt(cssStr, 10) : 0;
-  }
-
-  // Really cheap UUID function
-  private cheapUUID() {
-    return (Math.random() * 100000000).toFixed(0);
-  }
-
-  private getHeight(elem: HTMLElement) {
-    const heightStr = $(elem).css('height');
-    return heightStr ? parseInt(heightStr, 10) : 0;
-  }
-
-  private getWidth(elem: HTMLElement) {
-    const widthStr = $(elem).css('width');
-    return widthStr ? parseInt(widthStr, 10) : 0;
-  }
-
-  private getBestDimensions(minR: number, maxR: number, count: number, WIDTH: number, HEIGHT: number, targetHeight: number) {
-    let maxArea, targetCols, targetRows, targetWidth, tWidth, tHeight, tRatio;
-
-    // Iterate through every possible combination of rows and columns
-    // and see which one has the least amount of whitespace
-    for (let i = 1; i <= count; i++) {
-      const colsAux = i;
-      const rowsAux = Math.ceil(count / colsAux);
-
-      // Try taking up the whole height and width
-      tHeight = Math.floor(HEIGHT / rowsAux);
-      tWidth = Math.floor(WIDTH / colsAux);
-
-      tRatio = tHeight / tWidth;
-      if (tRatio > maxR) {
-        // We went over decrease the height
-        tRatio = maxR;
-        tHeight = tWidth * tRatio;
-      } else if (tRatio < minR) {
-        // We went under decrease the width
-        tRatio = minR;
-        tWidth = tHeight / tRatio;
-      }
-
-      const area = tWidth * tHeight * count;
-
-      // If this width and height takes up the most space then we're going with that
-      if (maxArea === undefined || area > maxArea) {
-        maxArea = area;
-        targetHeight = tHeight;
-        targetWidth = tWidth;
-        targetCols = colsAux;
-        targetRows = rowsAux;
-      }
-    }
-    return {
-      maxArea: maxArea,
-      targetCols: targetCols,
-      targetRows: targetRows,
-      targetHeight: targetHeight,
-      targetWidth: targetWidth,
-      ratio: targetHeight / targetWidth,
-    };
-  }
-
-  private arrange(
-    children: HTMLVideoElement[],
-    WIDTH: number,
-    HEIGHT: number,
-    offsetLeft: number,
-    offsetTop: number,
-    fixedRatio: boolean,
-    minRatio: number,
-    maxRatio: number,
-    animate: any,
-  ) {
-    let targetHeight;
-
-    const count = children.length;
-    let dimensions;
-
-    if (!fixedRatio) {
-      dimensions = this.getBestDimensions(minRatio, maxRatio, count, WIDTH, HEIGHT, targetHeight);
-    } else {
-      // Use the ratio of the first video element we find to approximate
-      const ratio = this.getVideoRatio(children.length > 0 ? children[0] : null);
-      dimensions = this.getBestDimensions(ratio, ratio, count, WIDTH, HEIGHT, targetHeight);
-    }
-
-    // Loop through each stream in the container and place it inside
-    let x = 0,
-      y = 0;
-    const rows = [];
-    let row;
-    // Iterate through the children and create an array with a new item for each row
-    // and calculate the width of each row so that we know if we go over the size and need
-    // to adjust
-    for (let i = 0; i < children.length; i++) {
-      if (i % dimensions.targetCols === 0) {
-        // This is a new row
-        row = {
-          children: [],
-          width: 0,
-          height: 0,
-        };
-        rows.push(row);
-      }
-      const elem: HTMLVideoElement = children[i];
-      row.children.push(elem);
-      let targetWidth = dimensions.targetWidth;
-      targetHeight = dimensions.targetHeight;
-      // If we're using a fixedRatio then we need to set the correct ratio for this element
-      if (fixedRatio) {
-        targetWidth = targetHeight / this.getVideoRatio(elem);
-      }
-      row.width += targetWidth;
-      row.height = targetHeight;
-    }
-    // Calculate total row height adjusting if we go too wide
-    let totalRowHeight = 0;
-    let remainingShortRows = 0;
-    for (let i = 0; i < rows.length; i++) {
-      row = rows[i];
-      if (row.width > WIDTH) {
-        // Went over on the width, need to adjust the height proportionally
-        row.height = Math.floor(row.height * (WIDTH / row.width));
-        row.width = WIDTH;
-      } else if (row.width < WIDTH) {
-        remainingShortRows += 1;
-      }
-      totalRowHeight += row.height;
-    }
-    if (totalRowHeight < HEIGHT && remainingShortRows > 0) {
-      // We can grow some of the rows, we're not taking up the whole height
-      let remainingHeightDiff = HEIGHT - totalRowHeight;
-      totalRowHeight = 0;
-      for (let i = 0; i < rows.length; i++) {
-        row = rows[i];
-        if (row.width < WIDTH) {
-          // Evenly distribute the extra height between the short rows
-          let extraHeight = remainingHeightDiff / remainingShortRows;
-          if (extraHeight / row.height > (WIDTH - row.width) / row.width) {
-            // We can't go that big or we'll go too wide
-            extraHeight = Math.floor((WIDTH - row.width) / row.width * row.height);
-          }
-          row.width += Math.floor(extraHeight / row.height * row.width);
-          row.height += extraHeight;
-          remainingHeightDiff -= extraHeight;
-          remainingShortRows -= 1;
-        }
-        totalRowHeight += row.height;
-      }
-    }
-    // vertical centering
-    y = (HEIGHT - totalRowHeight) / 2;
-    // Iterate through each row and place each child
-    for (let i = 0; i < rows.length; i++) {
-      row = rows[i];
-      // center the row
-      const rowMarginLeft = (WIDTH - row.width) / 2;
-      x = rowMarginLeft;
-      for (let j = 0; j < row.children.length; j++) {
-        const elem: HTMLVideoElement = row.children[j];
-
-        let targetWidth = dimensions.targetWidth;
-        targetHeight = row.height;
-        // If we're using a fixedRatio then we need to set the correct ratio for this element
-        if (fixedRatio) {
-          targetWidth = Math.floor(targetHeight / this.getVideoRatio(elem));
-        }
-        elem.style.position = 'absolute';
-        // $(elem).css('position', 'absolute');
-        const actualWidth =
-          targetWidth -
-          this.getCSSNumber(elem, 'paddingLeft') -
-          this.getCSSNumber(elem, 'paddingRight') -
-          this.getCSSNumber(elem, 'marginLeft') -
-          this.getCSSNumber(elem, 'marginRight') -
-          this.getCSSNumber(elem, 'borderLeft') -
-          this.getCSSNumber(elem, 'borderRight');
-
-        const actualHeight =
-          targetHeight -
-          this.getCSSNumber(elem, 'paddingTop') -
-          this.getCSSNumber(elem, 'paddingBottom') -
-          this.getCSSNumber(elem, 'marginTop') -
-          this.getCSSNumber(elem, 'marginBottom') -
-          this.getCSSNumber(elem, 'borderTop') -
-          this.getCSSNumber(elem, 'borderBottom');
-
-        this.positionElement(elem, x + offsetLeft, y + offsetTop, actualWidth, actualHeight, animate);
-        x += targetWidth;
-      }
-      y += targetHeight;
-    }
-  }
-
-  private filterDisplayNone(element: HTMLElement) {
-    return element.style.display !== 'none';
-  }
-
-  updateLayout() {
-    if (this.layoutContainer.style.display === 'none') {
-      return;
-    }
+  /**
+   * Updates the layout.
+   */
+  updateLayout(): void {
+    // Gets or sets an id for the container.
     let id = this.layoutContainer.id;
     if (!id) {
       id = 'OT_' + this.cheapUUID();
       this.layoutContainer.id = id;
     }
 
-    const HEIGHT =
-      this.getHeight(this.layoutContainer) -
-      this.getCSSNumber(this.layoutContainer, 'borderTop') -
+    const HEIGHT = this.getCSSNumber(this.layoutContainer, 'height') - this.getCSSNumber(this.layoutContainer, 'borderTop') -
       this.getCSSNumber(this.layoutContainer, 'borderBottom');
-    const WIDTH =
-      this.getWidth(this.layoutContainer) -
-      this.getCSSNumber(this.layoutContainer, 'borderLeft') -
+    const WIDTH = this.getCSSNumber(this.layoutContainer, 'width') - this.getCSSNumber(this.layoutContainer, 'borderLeft') -
       this.getCSSNumber(this.layoutContainer, 'borderRight');
 
-    const availableRatio = HEIGHT / WIDTH;
+    const elements = this.layoutContainer.querySelectorAll('#' + id + '>.' + this.options.elementClass);
+    let elementArray: HTMLElement[] = Array.prototype.map.call(elements, (el) => el);
+    elementArray = elementArray.filter((el) => el.style.display !== 'none');
 
-    let offsetLeft = 0;
-    let offsetTop = 0;
-    let bigOffsetTop = 0;
-    let bigOffsetLeft = 0;
+    // Get the list of videos.
+    const videoElements = elementArray.map((el) => {
+      const video = <HTMLVideoElement>el.querySelector('video');
+      return {
+        el,
+        video,
+        ratio: this.getVideoRatio(video)
+      };
+    });
 
-    const bigOnes = Array.prototype.filter.call(
-      this.layoutContainer.querySelectorAll('#' + id + '>.' + this.opts.bigClass),
-      this.filterDisplayNone,
-    );
-    const smallOnes = Array.prototype.filter.call(
-      this.layoutContainer.querySelectorAll('#' + id + '>*:not(.' + this.opts.bigClass + ')'),
-      this.filterDisplayNone,
-    );
 
-    if (bigOnes.length > 0 && smallOnes.length > 0) {
-      let bigWidth, bigHeight;
+    this.arrange(videoElements, WIDTH, HEIGHT);
+  }
 
-      if (availableRatio > this.getVideoRatio(bigOnes[0])) {
-        // We are tall, going to take up the whole width and arrange small
-        // guys at the bottom
-        bigWidth = WIDTH;
-        bigHeight = Math.floor(HEIGHT * this.opts.bigPercentage);
-        offsetTop = bigHeight;
-        bigOffsetTop = HEIGHT - offsetTop;
-      } else {
-        // We are wide, going to take up the whole height and arrange the small
-        // guys on the right
-        bigHeight = HEIGHT;
-        bigWidth = Math.floor(WIDTH * this.opts.bigPercentage);
-        offsetLeft = bigWidth;
-        bigOffsetLeft = WIDTH - offsetLeft;
-      }
-      if (this.opts.bigFirst) {
-        this.arrange(
-          bigOnes,
-          bigWidth,
-          bigHeight,
-          0,
-          0,
-          this.opts.bigFixedRatio,
-          this.opts.bigMinRatio,
-          this.opts.bigMaxRatio,
-          this.opts.animate,
-        );
-        this.arrange(
-          smallOnes,
-          WIDTH - offsetLeft,
-          HEIGHT - offsetTop,
-          offsetLeft,
-          offsetTop,
-          this.opts.fixedRatio,
-          this.opts.minRatio,
-          this.opts.maxRatio,
-          this.opts.animate,
-        );
-      } else {
-        this.arrange(
-          smallOnes,
-          WIDTH - offsetLeft,
-          HEIGHT - offsetTop,
-          0,
-          0,
-          this.opts.fixedRatio,
-          this.opts.minRatio,
-          this.opts.maxRatio,
-          this.opts.animate,
-        );
-        this.arrange(
-          bigOnes,
-          bigWidth,
-          bigHeight,
-          bigOffsetLeft,
-          bigOffsetTop,
-          this.opts.bigFixedRatio,
-          this.opts.bigMinRatio,
-          this.opts.bigMaxRatio,
-          this.opts.animate,
-        );
-      }
-    } else if (bigOnes.length > 0 && smallOnes.length === 0) {
-      this
-        // We only have one bigOne just center it
-        .arrange(
-          bigOnes,
-          WIDTH,
-          HEIGHT,
-          0,
-          0,
-          this.opts.bigFixedRatio,
-          this.opts.bigMinRatio,
-          this.opts.bigMaxRatio,
-          this.opts.animate,
-        );
-    } else {
-      this.arrange(
-        smallOnes,
-        WIDTH - offsetLeft,
-        HEIGHT - offsetTop,
-        offsetLeft,
-        offsetTop,
-        this.opts.fixedRatio,
-        this.opts.minRatio,
-        this.opts.maxRatio,
-        this.opts.animate,
-      );
+
+  // AUXILIARY METHODS --------------------------------------------------------
+
+  /**
+   * Gets the ratio of the specified video.
+   */
+  private getVideoRatio(video: HTMLVideoElement) {
+    if (video && video.readyState >= 1) { // 1: HAVE_METADATA
+      console.log('JULS video', video.readyState, video.videoWidth, video.videoHeight);
+      return video.videoHeight / video.videoWidth;
     }
+
+    return 3 / 4;
   }
 
-  initLayoutContainer(container, opts) {
-    this.opts = {
-      maxRatio: opts.maxRatio != null ? opts.maxRatio : 3 / 2,
-      minRatio: opts.minRatio != null ? opts.minRatio : 9 / 16,
-      fixedRatio: opts.fixedRatio != null ? opts.fixedRatio : false,
-      animate: opts.animate != null ? opts.animate : false,
-      bigClass: opts.bigClass != null ? opts.bigClass : 'OT_big',
-      bigPercentage: opts.bigPercentage != null ? opts.bigPercentage : 0.8,
-      bigFixedRatio: opts.bigFixedRatio != null ? opts.bigFixedRatio : false,
-      bigMaxRatio: opts.bigMaxRatio != null ? opts.bigMaxRatio : 3 / 2,
-      bigMinRatio: opts.bigMinRatio != null ? opts.bigMinRatio : 9 / 16,
-      bigFirst: opts.bigFirst != null ? opts.bigFirst : true,
+  /**
+   * Converts a CSS property to a number.
+   */
+  private getCSSNumber(elem: HTMLElement, prop: string): number {
+    const cssStr = $(elem).css(prop);
+    return cssStr ? parseInt(cssStr, 10) : 0;
+  }
+
+  /**
+   * Creates a really cheap UUID.
+   */
+  private cheapUUID(): string {
+    return (Math.random() * 100000000).toFixed(0);
+  }
+
+  /**
+   * Gets the best dimension for the specified configuration.
+   */
+  private getBestDimensions(children: CustomVideoElement[], WIDTH: number, HEIGHT: number) {
+    const bestDimensions = {
+      maxArea: 0,
+      numColumns: 0,
+      numRows: 0,
+      maxCellHeight: 0,
+      maxCellWidth: 0,
+      cellRatio: 0
     };
-    this.layoutContainer = typeof container === 'string' ? $(container) : container;
+
+    // Iterate through every possible combination of rows and columns
+    // and see which one has the least amount of whitespace
+    for (let i = 1; i <= children.length; i++) {
+      const numColumns = i;
+      const numRows = Math.ceil(children.length / numColumns);
+
+      // Calculates the whole area used by the videos.
+      const maxCellHeight = Math.floor(HEIGHT / numRows);
+      const maxCellWidth = Math.floor(WIDTH / numColumns);
+      const cellRatio = maxCellHeight / maxCellWidth;
+      let totalArea = 0;
+
+      for (const child of children) {
+        let usedHeight = maxCellHeight;
+        let usedWidth = maxCellWidth;
+
+        if (cellRatio > child.ratio) {
+          // Decrease the height to fit in the cell.
+          usedHeight = maxCellWidth * child.ratio;
+        } else if (cellRatio < child.ratio) {
+          // Decrease the width to fit in the cell.
+          usedWidth = maxCellHeight / child.ratio;
+        }
+
+        totalArea += usedHeight * usedWidth;
+      }
+
+      // If this width and height takes up the most space then we're going with that
+      if (bestDimensions.maxArea < totalArea) {
+        bestDimensions.maxArea = totalArea;
+        bestDimensions.maxCellHeight = maxCellHeight;
+        bestDimensions.maxCellWidth = maxCellWidth;
+        bestDimensions.numColumns = numColumns;
+        bestDimensions.numRows = numRows;
+        bestDimensions.cellRatio = cellRatio;
+      }
+    }
+
+    return bestDimensions;
   }
 
-  setLayoutOptions(options: OpenViduLayoutOptions) {
-    this.opts = options;
+  /**
+   * Arranges all the elements inside the container.
+   */
+  private arrange(children: CustomVideoElement[], WIDTH: number, HEIGHT: number): void {
+    const dimensions = this.getBestDimensions(children, WIDTH, HEIGHT);
+
+    // Change children
+    for (const child of children) {
+      console.log('JULS video end', child, dimensions);
+      let w = dimensions.maxCellWidth;
+      let h = dimensions.maxCellHeight;
+
+      if (dimensions.cellRatio > child.ratio) {
+        // Decrease the height to fit in the cell.
+        h = dimensions.maxCellWidth * child.ratio;
+      } else if (dimensions.cellRatio < child.ratio) {
+        // Decrease the width to fit in the cell.
+        w = dimensions.maxCellHeight / child.ratio;
+      }
+
+      $(child.el).css({
+        width: w + 'px',
+        height: h + 'px'
+      });
+    }
+
+    // Change container
+    $(this.layoutContainer).css({
+      display: 'flex',
+      'flex-direction': this.options.fillColumnsFirst ? 'column' : 'row',
+      'flex-wrap': 'wrap',
+      'justify-content': 'center',
+      'align-content': 'center',
+      'align-items': 'center'
+    });
   }
 }

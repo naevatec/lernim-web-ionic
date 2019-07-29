@@ -14,40 +14,31 @@
 </head>
 
 <body>
-    <header>
-        <p><span> Lernim </span> - Openvidu Web Component </p>
-    </header>
     <!-- Form to connect to a video-session -->
     <div id="main" >
         <div id= "logo">
-            <img src="Captura.PNG" alt="logo">
+            <img src="cabecera.png" alt="logo">
         </div>
         <div id="login" >
             <form onsubmit="joinSession(); return false">
                 <div class= "flex-container" >
-                    <label>Session Name:</label>
-                    <input type="text" id="sessionName" value="SessionA" required>
+                    <label>Nombre de la sesión:</label>
+                    <input type="text" id="sessionName" value="SesionA" required>
                 </div>
                 <div class= "flex-container" >
-                    <label>User Name:</label>
-                    <input type="text" id="user" value="User1">
+                    <label>Nombre usuario:</label>
+                    <input type="text" id="user" value="Usuario1">
                 </div>
                 <div class="center">
-                    <label>Is teacher?:</label>
+                    <label>¿Profesor?:</label>
                     <input type="checkbox" id="checkTeacher">
                 </div>
                 <div class="center">
-                    <input class="button" type="submit" value="JOIN VIDEO">
+                    <input class="button" type="submit" value="UNIRSE">
                 </div>
             </form>
         </div>
     </div>
-    <footer>
-        <div>
-            <p class="infoFooter1"> This is a sample application Demo </p>  
-            <p class="infoFooter2"><a href="https://github.com/naevatec/lernim-web-ionic/tree/master/demo-webcomponent" target="_blank"> GitHub repository </a></p> 
-        </div>
-    </footer>
 
     <!-- OpenVidu Web Component -->
     <openvidu-teaching-webcomponent style="display: none;"></openvidu-teaching-webcomponent>

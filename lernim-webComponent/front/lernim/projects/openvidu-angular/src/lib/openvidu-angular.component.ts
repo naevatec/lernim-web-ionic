@@ -1,43 +1,41 @@
-import { Component, OnInit, Input, Output, EventEmitter, ViewChild } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { VideoRoomComponent } from './video-room/video-room.component';
 
 @Component({
   selector: 'opv-session',
   template: `
-  <app-video-room #videoRoom [theme]="theme" [sessionName]="sessionName" [user]="user" [openviduServerUrl]="openviduServerUrl"
-  [openviduSecret]="openviduSecret" [token]="token" (leaveSession)="emitLeaveSessionEvent($event)"
-   (joinSession)="emitJoinSessionEvent($event)" (error)="emitErrorEvent($event)">
-</app-video-room>
+    <app-video-room #videoRoom
+                    [theme]="theme"
+                    [sessionName]="sessionName"
+                    [userName]="user"
+                    [openviduServerUrl]="openviduServerUrl"
+                    [openviduSecret]="openviduSecret"
+                    [token]="token"
+                    (leaveSession)="emitLeaveSessionEvent($event)"
+                    (joinSession)="emitJoinSessionEvent($event)"
+                    (error)="emitErrorEvent($event)"></app-video-room>
   `,
-  styles: [],
+  styles: []
 })
 export class OpenviduSessionComponent implements OnInit {
   // webComponent's inputs and outputs
-  @Input()
-  sessionName: string;
-  @Input()
-  user: string;
-  @Input()
-  openviduServerUrl: string;
-  @Input()
-  openviduSecret: string;
-  @Input()
-  token: string;
-  @Input()
-  theme: string;
-  @Output()
-  joinSession = new EventEmitter<any>();
-  @Output()
-  leaveSession = new EventEmitter<any>();
-  @Output()
-  error = new EventEmitter<any>();
+  @Input() sessionName: string;
+  @Input() user: string;
+  @Input() openviduServerUrl: string;
+  @Input() openviduSecret: string;
+  @Input() token: string;
+  @Input() theme: string;
+  @Output() joinSession = new EventEmitter<any>();
+  @Output() leaveSession = new EventEmitter<any>();
+  @Output() error = new EventEmitter<any>();
 
-  @ViewChild('videoRoom')
-  videoRoom: VideoRoomComponent;
+  @ViewChild('videoRoom') videoRoom: VideoRoomComponent;
 
-  constructor() {}
+  constructor() {
+  }
 
-  ngOnInit() {}
+  ngOnInit() {
+  }
 
   emitJoinSessionEvent(event): void {
     this.joinSession.emit(event);

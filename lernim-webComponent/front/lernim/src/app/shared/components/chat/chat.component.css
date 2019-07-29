@@ -1,73 +1,175 @@
 #chatContainer {
-  position: absolute;
-  z-index: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
   width: 100%;
   height: 100%;
 }
 
-#chatToolbar {
-  height: 30px;
+.toolbar {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  height: 40px;
   background-color: #3d3d3d;
   box-sizing: border-box;
   font-weight: bold;
   font-size: 14px;
-  text-align: center;
-  padding-top: 4px;
   border-top-left-radius: 6px;
   border-top-right-radius: 6px;
   color: #ffffff;
+  flex-grow: 0;
+  flex-shrink: 0;
 }
 
-#closeButton {
-  position: absolute;
-  right: 0;
-  top: -5px;
+.toolbar > .left, .toolbar > .right {
+  flex-grow: 1;
+  flex-shrink: 1;
+  flex-basis: 25%;
+  height: 100%;
 }
 
-#participantButton {
-  position: absolute;
-  right: 50px;
-  top: -5px;
-}
-
-#chatComponent {
-  background-color: #b8b8b8;
-  position: absolute;
-  z-index: 99999;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  margin: auto;
-  height: calc(100% - 30px);
-  width: calc(100% - 30px);
-  border-radius: 20px;
-}
-
-#participantsView {
-  background-color: rgb(94, 91, 91);
-  padding: 1em;
-}
-
-.msg-info-participant {
+.toolbar > .left {
   display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
 }
 
-.msg-info-participant p {
-  margin: 0;
-  padding-left: 1em;
+.toolbar .center {
+  text-align: center;
+  line-height: 40px;
 }
 
-.message-wrap {
-  padding: 0 15px;
-  height: calc(100% - 80px);
+.toolbar .right {
+  text-align: right;
+}
+
+.body {
+  flex-grow: 1;
+  background-color: #b8b8b8;
   overflow: auto;
 }
 
-.message {
-  position: relative;
-  padding: 7px 0;
+.body .participants {
+  box-sizing: border-box;
+  color: #ffffff;
+  background-color: rgb(94, 91, 91);
+  padding: 10px;
+  height: 100%;
+  overflow: hidden;
 }
+
+.body .participant {
+  display: flex;
+  flex-direction: row;
+  overflow: auto;
+}
+
+.body .participant .icons {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin-right: 10px;
+  width: 50px;
+}
+
+.body .participant .icons .teacher-tag {
+  color: rgba(0, 0, 0, 0.6);
+  font-size: 0.6em;
+  background-color: #ffc107;
+  padding-top: 2px;
+  padding-bottom: 2px;
+  font-weight: bold;
+  text-align: center;
+  width: 100%;
+}
+
+.body .participant .icons .myself-tag {
+  color: rgba(0, 0, 0, 0.6);
+  font-size: 0.6em;
+  background-color: #7ac5e2;
+  padding-top: 2px;
+  padding-bottom: 2px;
+  font-weight: bold;
+  text-align: center;
+  width: 100%;
+}
+
+.body .messages {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-sizing: border-box;
+  height: 100%;
+  overflow: auto;
+  padding: 10px 10px 0;
+  border-bottom: 1px solid #cccccc;
+}
+
+.body .messages .message {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+  margin-bottom: 10px;
+  padding: 10px;
+  border-radius: 15px 10px;
+  width: 70%;
+}
+
+.body .messages .message.left {
+  align-self: flex-start;
+  background-color: #999999;
+}
+
+.body .messages .message.right {
+  align-self: flex-end;
+  background-color: #94b9ce;
+}
+
+.body .messages .message .details {
+  position: relative;
+  padding-bottom: 2px;
+  font-weight: bold;
+  margin-bottom: 3px;
+  width: 100%;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+}
+
+.body .messages .message .details .name {
+  font-weight: bold;
+}
+
+.body .messages .message .details .triangle {
+  border-radius: 2px;
+  height: 8px;
+  width: 8px;
+  display: block;
+  -webkit-transform: rotate(45deg);
+  transform: rotate(45deg);
+  position: absolute;
+}
+
+.body .messages .message.left .details .triangle {
+  left: -14px;
+  bottom: -6px;
+  background-color: #999999;
+}
+
+.body .messages .message.right .details .triangle {
+  right: -14px;
+  bottom: -6px;
+  background-color: #94b9ce;
+}
+
+.body .messages .message .content {
+  font-size: 0.95em;
+  font-weight: lighter;
+}
+
+/******/
+
 .user-img {
   position: absolute;
   border-radius: 45px;
@@ -136,6 +238,7 @@ span.triangle {
   background-color: #f0f0f0;
   float: left;
 }
+
 .message.left .msg-detail .msg-content span.triangle {
   background-color: #f0f0f0;
   border-bottom-width: 0;
@@ -150,6 +253,7 @@ span.triangle {
 .message.right .msg-detail .msg-info {
   text-align: right;
 }
+
 .message.right .user-img {
   right: -5px;
   border: 1px solid #c8ffe8ab;
@@ -159,6 +263,7 @@ span.triangle {
   background-color: #c8ffe8;
   float: right;
 }
+
 .message.right .msg-detail .msg-content span.triangle {
   background-color: #c8ffe8;
   border-bottom-width: 0;
@@ -166,39 +271,39 @@ span.triangle {
   right: -5px;
 }
 
-/* End my messages */
+/* Send messages */
 
-#messageInput {
-  position: absolute;
-  bottom: 0px;
-  width: 100%;
+.messageInput {
+  display: flex;
+  flex-direction: row;
+  height: 40px;
   background-color: #ffffff;
   text-align: center;
-  padding: 10px 0px;
-  height: 30px;
   border-bottom-left-radius: 6px;
   border-bottom-right-radius: 6px;
+  flex-grow: 0;
+  flex-shrink: 0;
 }
-#messageInput input {
-  width: 90%;
-  height: 100%;
+
+.messageInput input {
+  display: block;
+  flex-grow: 1;
   border: none;
   outline: none;
   font-size: 14px;
-  margin-left: -6%;
+  margin: 10px;
 }
 
-#sendButton {
+.messageInput .sendButton {
+  display: block;
+  height: 30px;
+  width: 30px;
+  line-height: 30px;
+  margin: 5px;
   background-color: #81e9b0;
-  position: absolute;
-  right: 10px;
-  top: 0;
-  bottom: 0;
-  margin: auto;
-  border: 1px solid #7ae2a9;
-  box-shadow: none !important;
 }
-#sendButton mat-icon {
+
+.messageInput .sendButton mat-icon {
   margin-left: 3px !important;
   margin-bottom: 2px !important;
 }

@@ -1,26 +1,20 @@
 #miniature-block {
   display: flex;
   align-items: flex-end;
-  height: 120px;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  position: absolute;
+  width: 100%;
   z-index: 10;
   overflow-x: auto;
+  overflow-y: hidden;
 }
 
 .miniature-list {
+  position: relative;
   display: flex;
   flex-grow: 1;
   flex-direction: row;
   justify-content: center;
   align-items: flex-end;
-  height: 50px;
-  background-color: rgba(0, 0, 0, 0.7);
-  border-top: 1px solid #3d3d3d;
-  border-top-left-radius: 5px;
-  border-top-right-radius: 5px;
+  height: 100%;
 }
 
 .message {
@@ -29,19 +23,37 @@
 }
 
 .miniature {
-  position: relative;
-  width: 160px;
-  height: 120px;
-  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  flex-direction: row;
+  height: 80px;
   margin-right: 20px;
+}
+
+.miniature:last-of-type {
+  margin-right: 0;
+}
+
+.miniature .video {
+  position: relative;
+  width: 107px;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.7);
   text-align: center;
+}
+
+.miniature-double {
+  height: 240px;
+}
+
+.miniature-double .video {
+  width: 320px;
 }
 
 .miniature:last-child {
   margin-right: 0;
 }
 
-.miniature .name {
+.miniature .video .name {
   position: absolute;
   color: #ffffff;
   bottom: 0;
@@ -57,8 +69,24 @@
   padding-right: 10px;
 }
 
-.miniature img {
-  max-width: 80%;
-  max-height: 80%;
-  margin-top: 5px;
+.miniature .video img {
+  max-height: 50%;
+  margin-top: 10%;
+}
+
+.miniature .buttons {
+  display: grid;
+  grid-auto-flow: column;
+  grid-template-rows: repeat(2, 40px);
+  color: #ffffff;
+  background-color: #161616;
+  border-left: 1px solid #4d4d4d;
+}
+
+.miniature-double .buttons {
+  grid-template-rows: repeat(6, 40px);
+}
+
+.miniature.granted {
+  border: 1px solid #ffa600;
 }

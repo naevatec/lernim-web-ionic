@@ -1,0 +1,11 @@
+<app-video-room-student *ngIf="display && !_roleTeacher"
+                        [theme]="theme"
+                        [sessionName]="_sessionName"
+                        [userName]="_userName"
+                        (leaveSession)="leaveSessionHandler()"></app-video-room-student>
+
+<app-video-room-teacher *ngIf="display && _roleTeacher"
+                        [theme]="theme"
+                        [sessionName]="_sessionName"
+                        [userName]="_userName"
+                        (leaveSession)="leaveSessionHandler()"></app-video-room-teacher>
