@@ -31,11 +31,11 @@ Una aplicación exclusiva del lado del cliente creada con los frameworks Ionic v
 
 4) openvidu-server and Kurento Media Server must be up and running in your development machine. The easiest way is running this Docker container which wraps both of them (you will need Docker CE)
 
-    `docker run -p 4443:4443 --rm -e openvidu.secret=MY_SECRET openvidu/openvidu-server-kms:2.9.0`
+    `docker run -p 4443:4443 --rm -e openvidu.secret=MY_SECRET openvidu/openvidu-server-kms:2.11.0`
     
     or
 
-    `docker run -p 4443:4443 --rm -e openvidu.secret=MY_SECRET -e openvidu.publicurl=YOUR_OPENVIDU_PUBLIC_URL openvidu/openvidu-server-kms:2.9.0`
+    `docker run -p 4443:4443 --rm -e openvidu.secret=MY_SECRET -e openvidu.publicurl=YOUR_OPENVIDU_PUBLIC_URL openvidu/openvidu-server-kms:2.11.0`
     
 ### In the browser:
 
@@ -92,11 +92,11 @@ You will need to sign your application in Xcode (opening folder lernim-ionic/pla
     
 * You need to copy the dependencies and cordova plugins of the file [package.jason](https://github.com/naevatec/lernim-web-ionic/blob/master/lernim-ionic/package.json). The most specific for this module are:
 
-    * `"openvidu-browser": "2.9.0",`
+    * `"openvidu-browser": "^2.11.0",`
     
-    * `"ngx-linkifyjs": "^1.1.0",`
+    * `"ngx-linkifyjs": "^1.3.0",`
     
-    * `"cordova-plugin-iosrtc": "^4.0.2",`
+    * `"cordova-plugin-iosrtc": "^6.0.5",`
  
 * You need to copy the configuration of the file [config.xml](https://github.com/naevatec/lernim-web-ionic/blob/master/lernim-ionic/config.xml).
     
