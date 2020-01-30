@@ -17,7 +17,7 @@
 
   `npm run build:openvidu-webcomponent -- VERSION`
   
-  For example: `npm run build:openvidu-webcomponent -- 2.8.0`
+  For example: `npm run build:openvidu-webcomponent -- 2.11.0`
 
 This command is a script declared in the package.json and uses the file `openvidu-webcomponent-build.js`.
 
@@ -46,7 +46,7 @@ Here you can see how to use the web component: [demo-webcomponent](https://githu
 
 2) Openvidu-server and Kurento Media Server must be up and running in your development machine. The easiest way is running this Docker container which wraps both of them (you will need Docker CE):
 
-     `docker run -p 4443:4443 --rm -e openvidu.secret=MY_SECRET openvidu/openvidu-server-kms:2.8.0`
+     `docker run -p 4443:4443 --rm -e openvidu.secret=MY_SECRET openvidu/openvidu-server-kms:2.11.0`
   
 3) Launch the server:
 

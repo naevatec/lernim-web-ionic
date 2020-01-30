@@ -1,17 +1,19 @@
-import { Component, Input, OnInit, HostListener, ElementRef, ViewChild, Output, EventEmitter, SimpleChanges } from '@angular/core';
-import { StreamManager } from 'openvidu-browser';
+import {
+  Component, ElementRef, EventEmitter, HostListener, Input, OnInit, Output, SimpleChanges, ViewChild
+} from "@angular/core";
+import { StreamManager } from "openvidu-browser";
 
 @Component({
-  selector: 'stream-component',
-  styleUrls: ['./stream.component.css'],
-  templateUrl: './stream.component.html',
+  selector: "stream-component",
+  styleUrls: ["./stream.component.css"],
+  templateUrl: "./stream.component.html"
 })
 export class StreamComponent implements OnInit {
-  fullscreenIcon = 'fullscreen';
+  fullscreenIcon = "fullscreen";
   mutedSound: boolean;
   isFullscreen: boolean;
-  mutedSoundIcon = 'volume_up';
-  publishAudioIcon = 'volume_up';
+  mutedSoundIcon = "volume_up";
+  publishAudioIcon = "volume_up";
 
   @Input() streamManager: StreamManager;
   @Input() lightTheme: boolean;
@@ -23,18 +25,17 @@ export class StreamComponent implements OnInit {
   @Output() screenShareClicked = new EventEmitter<any>();
   @Output() screenShareDisabledClicked = new EventEmitter<any>();
 
-  @ViewChild('videoElement') htmlVideoElement: ElementRef;
+  @ViewChild("videoElement", {static: false}) htmlVideoElement: ElementRef;
   videoElement: HTMLVideoElement;
 
-  @HostListener('window:resize', ['$event'])
-  sizeChange(event) {
+  @HostListener("window:resize", ["$event"]) sizeChange(event) {
     const maxHeight = window.screen.height;
     const maxWidth = window.screen.width;
     const curHeight = window.innerHeight;
     const curWidth = window.innerWidth;
     if (maxWidth !== curWidth && maxHeight !== curHeight) {
       this.isFullscreen = false;
-      this.fullscreenIcon = 'fullscreen';
+      this.fullscreenIcon = "fullscreen";
     }
   }
 
@@ -47,17 +48,17 @@ export class StreamComponent implements OnInit {
   // }
 
   ngOnChanges(changes: SimpleChanges) { // Listen to 'muted' property changes
-    if (changes['muted']) {
-      this.muted = changes['muted'].currentValue;
-      console.warn('Small: ' + this.small + ' | Muted: '  + this.muted);
+    if (changes["muted"]) {
+      this.muted = changes["muted"].currentValue;
+      console.warn("Small: " + this.small + " | Muted: " + this.muted);
       this.mutedSound = this.muted;
     }
-    if (changes['publishAudio']) {
-      this.publishAudio = changes['publishAudio'].currentValue;
+    if (changes["publishAudio"]) {
+      this.publishAudio = changes["publishAudio"].currentValue;
       if (this.publishAudio) {
-        this.publishAudioIcon = 'volume_up';
+        this.publishAudioIcon = "volume_up";
       } else {
-        this.publishAudioIcon = 'volume_off';
+        this.publishAudioIcon = "volume_off";
       }
     }
   }
@@ -70,9 +71,10 @@ export class StreamComponent implements OnInit {
 
   getNicknameTag() {
     try {
-        return JSON.parse(this.streamManager.stream.connection.data).userName;
-    } catch (err) {
-        console.error('Username is not JSON formatted');
+      return JSON.parse(this.streamManager.stream.connection.data).userName;
+    }
+    catch (err) {
+      console.error("Username is not JSON formatted");
     }
   }
 

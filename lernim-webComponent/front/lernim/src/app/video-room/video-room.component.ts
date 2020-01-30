@@ -1,19 +1,29 @@
-import { Component, EventEmitter, HostListener, Input, OnDestroy, OnInit, Output, ViewChild } from '@angular/core';
-import { MatDialog } from '@angular/material';
-import { ActivatedRoute, Params, Router } from '@angular/router';
-import { OpenVidu, Publisher, Session, SignalOptions, VideoElementEvent, StreamEvent,
-  ConnectionEvent, Connection, StreamManager, SignalEvent } from 'openvidu-browser';
-import { DialogErrorComponent } from '../shared/components/dialog-error/dialog-error.component';
-import { OpenViduLayout, OpenViduLayoutOptions } from '../shared/layout/openvidu-layout';
-import { UserModel } from '../shared/models/user-model';
-import { InterventionAskedPipe } from '../shared/pipes/intervention-asked';
-import { OpenViduService } from '../shared/services/open-vidu.service';
-import { ChatComponent } from '../shared/components/chat/chat.component';
+import { Component, EventEmitter, HostListener, Input, OnDestroy, OnInit, Output, ViewChild } from "@angular/core";
+import { MatDialog } from "@angular/material";
+import { ActivatedRoute, Params, Router } from "@angular/router";
+import {
+  Connection,
+  ConnectionEvent,
+  OpenVidu,
+  Publisher,
+  Session,
+  SignalEvent,
+  SignalOptions,
+  StreamEvent,
+  StreamManager,
+  VideoElementEvent
+} from "openvidu-browser";
+import { DialogErrorComponent } from "../shared/components/dialog-error/dialog-error.component";
+import { OpenViduLayout, OpenViduLayoutOptions } from "../shared/layout/openvidu-layout";
+import { UserModel } from "../shared/models/user-model";
+import { InterventionAskedPipe } from "../shared/pipes/intervention-asked";
+import { OpenViduService } from "../shared/services/open-vidu.service";
+import { ChatComponent } from "../shared/components/chat/chat.component";
 
 @Component({
-  selector: 'app-video-room',
-  templateUrl: './video-room.component.html',
-  styleUrls: ['./video-room.component.css'],
+  selector: "app-video-room",
+  templateUrl: "./video-room.component.html",
+  styleUrls: ["./video-room.component.css"],
   providers: [InterventionAskedPipe]
 })
 export class VideoRoomComponent implements OnInit, OnDestroy {
@@ -30,16 +40,16 @@ export class VideoRoomComponent implements OnInit, OnDestroy {
   @Output() leaveSession = new EventEmitter<any>();
   @Output() error = new EventEmitter<any>();
 
-  @ViewChild('chatComponent') chatComponent: ChatComponent;
+  @ViewChild("chatComponent", {static: false}) chatComponent: ChatComponent;
 
   // Constants
-  BIG_ELEMENT_CLASS = 'OV_big';
+  BIG_ELEMENT_CLASS = "OV_big";
 
   // Variables
   compact = false;
   messageReceived = false;
   lightTheme: boolean;
-  chatDisplay: 'none' | 'block' = 'none';
+  chatDisplay: "none" | "block" = "none";
   showDialogExtension = false;
   bigElement: HTMLElement;
 
@@ -75,24 +85,19 @@ export class VideoRoomComponent implements OnInit, OnDestroy {
   screenShareActive = false;
 
   // Icons
-  interventionIcon = 'record_voice_over';
-  fullscreenIcon = 'fullscreen';
-  publishAudioIcon = 'mic';
+  interventionIcon = "record_voice_over";
+  fullscreenIcon = "fullscreen";
+  publishAudioIcon = "mic";
 
-  constructor(
-    private openViduSrv: OpenViduService,
-    private router: Router,
-    private route: ActivatedRoute,
-    public dialog: MatDialog,
-  ) {}
+  constructor(private openViduSrv: OpenViduService, private router: Router, private route: ActivatedRoute,
+    public dialog: MatDialog) {
+  }
 
-  @HostListener('window:beforeunload')
-  beforeunloadHandler() {
+  @HostListener("window:beforeunload") beforeunloadHandler() {
     this.exitSession();
   }
 
-  @HostListener('window:resize', ['$event'])
-  sizeChange(event) {
+  @HostListener("window:resize", ["$event"]) sizeChange(event) {
     clearTimeout(this.resizeTimeout);
     this.resizeTimeout = setTimeout(() => {
       this.openviduLayout.updateLayout();
@@ -115,16 +120,16 @@ export class VideoRoomComponent implements OnInit, OnDestroy {
       maxRatio: 3 / 2, // The narrowest ratio that will be used (default 2x3)
       minRatio: 9 / 16, // The widest ratio that will be used (default 16x9)
       fixedRatio: true /* If this is true then the aspect ratio of the video is maintained
-      and minRatio and maxRatio are ignored (default false) */,
+       and minRatio and maxRatio are ignored (default false) */,
       bigClass: this.BIG_ELEMENT_CLASS, // The class to add to elements that should be sized bigger
       bigPercentage: 0.8, // The maximum percentage of space the big ones should take up
       bigFixedRatio: true, // fixedRatio for the big ones
       bigMaxRatio: 3 / 2, // The narrowest ratio to use for the big elements (default 2x3)
       bigMinRatio: 9 / 16, // The widest ratio to use for the big elements (default 16x9)
       bigFirst: true, // Whether to place the big one in the top left (true) or bottom right
-      animate: true, // Whether you want to animate the transitions
+      animate: true // Whether you want to animate the transitions
     };
-    this.openviduLayout.initLayoutContainer(document.getElementById('layout'), this.openviduLayoutOptions);
+    this.openviduLayout.initLayoutContainer(document.getElementById("layout"), this.openviduLayoutOptions);
     this.openviduLayout.updateLayout();
   }
 
@@ -132,20 +137,20 @@ export class VideoRoomComponent implements OnInit, OnDestroy {
     this.exitSession();
   }
 
-  toggleChat(property: 'none' | 'block') {
+  toggleChat(property: "none" | "block") {
     if (property) {
       this.chatDisplay = property;
     } else {
-      this.chatDisplay = this.chatDisplay === 'none' ? 'block' : 'none';
+      this.chatDisplay = this.chatDisplay === "none" ? "block" : "none";
     }
-    if (this.chatDisplay === 'block') {
+    if (this.chatDisplay === "block") {
       this.messageReceived = false;
     }
     setTimeout(() => this.openviduLayout.updateLayout(), 20);
   }
 
   checkNotification() {
-    this.messageReceived = this.chatDisplay === 'none';
+    this.messageReceived = this.chatDisplay === "none";
   }
 
   joinToSession() {
@@ -168,39 +173,14 @@ export class VideoRoomComponent implements OnInit, OnDestroy {
     this.session = null;
     this.OV = null;
     this.screenShareActive = false;
-    this.router.navigate(['']);
+    this.router.navigate([""]);
     this.leaveSession.emit();
   }
 
 
   micStatusChanged(): void {
     (<Publisher>this.mainStreamManager).publishAudio(!this.publishAudio);
-    this.sendSignalUserChanged({ isAudioActive: !this.publishAudio });
-  }
-
-  private sendSignalUserChanged(data: any): void {
-    const signalOptions: SignalOptions = {
-      data: JSON.stringify(data),
-      type: 'userChanged',
-    };
-    this.session.signal(signalOptions);
-  }
-
-  private subscribeToUserChanged() {
-    this.session.on('signal:userChanged', (event: any) => {
-      this.usersData.forEach((user: UserModel) => {
-          const data = JSON.parse(event.data);
-          if (data.isAudioActive !== undefined) {
-            this.publishAudio = data.isAudioActive;
-          }
-          if (data.isScreenShareActive !== undefined) {
-            this.screenShareActive = data.isScreenShareActive;
-            if (this.screenShareActive === true) {
-              this.checkSomeoneShareScreen();
-            }
-          }
-      });
-    });
+    this.sendSignalUserChanged({isAudioActive: !this.publishAudio});
   }
 
   screenShareDisabled(): void {
@@ -211,50 +191,46 @@ export class VideoRoomComponent implements OnInit, OnDestroy {
   }
 
   screenShare() {
-    const videoSource = navigator.userAgent.indexOf('Firefox') !== -1 ? 'window' : 'screen';
+    const videoSource = navigator.userAgent.indexOf("Firefox") !== -1 ? "window" : "screen";
     const publisher = this.OV.initPublisher(undefined, {
-        videoSource: videoSource,
-        publishAudio: true,
-        publishVideo: true,
-        mirror: false,
-      },
-      (error) => {
-        if (error && error.name === 'SCREEN_EXTENSION_NOT_INSTALLED') {
-          this.toggleDialogExtension();
-        } else if (error && error.name === 'SCREEN_SHARING_NOT_SUPPORTED') {
-          alert('Your browser does not support screen sharing');
-        } else if (error && error.name === 'SCREEN_EXTENSION_DISABLED') {
-          alert('You need to enable screen sharing extension');
-        } else if (error && error.name === 'SCREEN_CAPTURE_DENIED') {
-          alert('You need to choose a window or application to share');
-        }
+      videoSource: videoSource,
+      publishAudio: true,
+      publishVideo: true,
+      mirror: false
+    }, (error) => {
+      if (error && error.name === "SCREEN_EXTENSION_NOT_INSTALLED") {
+        this.toggleDialogExtension();
+      } else if (error && error.name === "SCREEN_SHARING_NOT_SUPPORTED") {
+        alert("Your browser does not support screen sharing");
+      } else if (error && error.name === "SCREEN_EXTENSION_DISABLED") {
+        alert("You need to enable screen sharing extension");
+      } else if (error && error.name === "SCREEN_CAPTURE_DENIED") {
+        alert("You need to choose a window or application to share");
       }
-    );
+    });
 
-    publisher.once('accessAllowed', () => {
+    publisher.once("accessAllowed", () => {
       this.session.unpublish(<Publisher>this.mainStreamManager);
       this.mainStreamManager = publisher;
       this.session.publish(<Publisher>this.mainStreamManager).then(() => {
         this.screenShareActive = true;
-        this.sendSignalUserChanged({ isScreenShareActive: this.screenShareActive });
+        this.sendSignalUserChanged({isScreenShareActive: this.screenShareActive});
       });
     });
 
-    publisher.on('streamPlaying', () => {
+    publisher.on("streamPlaying", () => {
       this.openviduLayout.updateLayout();
-      (<HTMLElement>publisher.videos[0].video).parentElement.classList.remove('custom-class');
+      (<HTMLElement>publisher.videos[0].video).parentElement.classList.remove("custom-class");
     });
   }
 
   toggleFullscreen() {
     const document: any = window.document;
-    const fs = document.getElementById('videoRoomNavBar');
-    if (!document.fullscreenElement &&
-      !document.mozFullScreenElement &&
-      !document.webkitFullscreenElement &&
+    const fs = document.getElementById("videoRoomNavBar");
+    if (!document.fullscreenElement && !document.mozFullScreenElement && !document.webkitFullscreenElement &&
       !document.msFullscreenElement) {
-      console.log('Entering fullscreen');
-      this.fullscreenIcon = 'fullscreen_exit';
+      console.log("Entering fullscreen");
+      this.fullscreenIcon = "fullscreen_exit";
       if (fs.requestFullscreen) {
         fs.requestFullscreen();
       } else if (fs.msRequestFullscreen) {
@@ -265,8 +241,8 @@ export class VideoRoomComponent implements OnInit, OnDestroy {
         fs.webkitRequestFullscreen();
       }
     } else {
-      console.log('Exiting fullscreen');
-      this.fullscreenIcon = 'fullscreen';
+      console.log("Exiting fullscreen");
+      this.fullscreenIcon = "fullscreen";
       if (document.exitFullscreen) {
         document.exitFullscreen();
       } else if (document.msExitFullscreen) {
@@ -284,25 +260,94 @@ export class VideoRoomComponent implements OnInit, OnDestroy {
   }
 
   checkSizeComponent() {
-    if (document.getElementById('layout').offsetWidth <= 700) {
+    if (document.getElementById("layout").offsetWidth <= 700) {
       this.compact = true;
-      this.toggleChat('none');
+      this.toggleChat("none");
     } else {
       this.compact = false;
     }
   }
 
+  askForIntervention() {
+    this.connectWebCam();
+
+    this.OVPublisher.on("accessAllowed", (event) => {
+      console.warn("OpenVidu camera access allowed");
+
+      const msg = {
+        interventionRequired: !this.interventionRequired
+      };
+
+      this.session.signal({
+        type: "askIntervention",
+        to: [this.teacherConnection],
+        data: JSON.stringify(msg)
+      });
+
+      // Invert intervention request
+      this.interventionRequired = !this.interventionRequired;
+      // Change intervention icon
+      this.interventionIcon = (this.interventionRequired ? "voice_over_off" : "record_voice_over");
+
+    });
+
+    this.OVPublisher.on("accessDenied", (event) => {
+      console.error("OpenVidu camera access denied");
+    });
+  }
+
+  grantIntervention(grant: boolean, userData: UserModel) {
+    this.session.signal({
+      type: "grantIntervention",
+      to: this.OVConnections.filter(connection => JSON.parse(connection.data).userName === userData.userName),
+      data: grant.toString()
+    });
+    // Set 'accessGranted' property of proper userData to 'grant' value
+    this.usersData.map((u) => {
+      if (u.userName === userData.userName) {
+        u.accessGranted = grant;
+        u.interventionRequired = grant;
+      }
+    });
+    this.studentAccessGranted = grant;
+  }
+
+  private sendSignalUserChanged(data: any): void {
+    const signalOptions: SignalOptions = {
+      data: JSON.stringify(data),
+      type: "userChanged"
+    };
+    this.session.signal(signalOptions);
+  }
+
+  private subscribeToUserChanged() {
+    this.session.on("signal:userChanged", (event: any) => {
+      this.usersData.forEach((user: UserModel) => {
+        const data = JSON.parse(event.data);
+        if (data.isAudioActive !== undefined) {
+          this.publishAudio = data.isAudioActive;
+        }
+        if (data.isScreenShareActive !== undefined) {
+          this.screenShareActive = data.isScreenShareActive;
+          if (this.screenShareActive === true) {
+            this.checkSomeoneShareScreen();
+          }
+        }
+      });
+    });
+  }
+
   private generateParticipantInfo() {
     this.route.params.subscribe((params: Params) => {
       this.mySessionId = params.roomName !== undefined ? params.roomName : this.sessionName;
-      this.myUserName = this.user || 'OpenVidu_User' + Math.floor(Math.random() * 100);
-      this.role = localStorage.getItem('role');
-      console.log('ROL: ' + this.role);
+      this.myUserName = this.user || "OpenVidu_User" + Math.floor(Math.random() * 100);
+      this.role = localStorage.getItem("role");
+      console.log("ROL: " + this.role);
     });
   }
 
   private subscribeToStreamCreated() {
-    this.session.on('streamCreated', (event: StreamEvent) => {
+    this.session.on("streamCreated", (event: StreamEvent) => {
 
       this.session.subscribe(event.stream, undefined);
 
@@ -310,34 +355,35 @@ export class VideoRoomComponent implements OnInit, OnDestroy {
       if (JSON.parse(streamManager.stream.connection.data).isTeacher) {
         this.teacherStream = streamManager;
         if (this.studentAccessGranted) {
-            this.extraStreamManager = streamManager;
+          this.extraStreamManager = streamManager;
         } else {
-            this.mainStreamManager = streamManager;
+          this.mainStreamManager = streamManager;
         }
       } else {
-          this.mainStreamManager = streamManager;
-          this.extraStreamManager = this.teacherStream;
-          this.studentAccessGranted = true;
+        this.mainStreamManager = streamManager;
+        this.extraStreamManager = this.teacherStream;
+        this.studentAccessGranted = true;
       }
     });
   }
 
   private subscribedToStreamDestroyed() {
-    this.session.on('streamDestroyed', (event: StreamEvent) => {
-      console.warn('OpenVidu stream destroyed: ', event.stream);
+    this.session.on("streamDestroyed", (event: StreamEvent) => {
+      console.warn("OpenVidu stream destroyed: ", event.stream);
 
       const streamManager: StreamManager = event.stream.streamManager;
       if (JSON.parse(streamManager.stream.connection.data).isTeacher) {
         if (this.myStudentAccessGranted) {
-            this.unpublish();
+          this.unpublish();
         }
         delete this.mainStreamManager;
         delete this.extraStreamManager;
         this.studentAccessGranted = false;
         this.myStudentAccessGranted = false;
         this.interventionRequired = false;
-        this.interventionIcon = 'record_voice_over';
-      } else  if (this.mainStreamManager.stream.connection.connectionId === streamManager.stream.connection.connectionId) {
+        this.interventionIcon = "record_voice_over";
+      } else if (this.mainStreamManager.stream.connection.connectionId ===
+        streamManager.stream.connection.connectionId) {
         this.studentAccessGranted = false;
         this.mainStreamManager = this.teacherStream;
       }
@@ -345,22 +391,22 @@ export class VideoRoomComponent implements OnInit, OnDestroy {
   }
 
   private subscribedToConectionCreated() {
-    this.session.on('connectionCreated', (event: ConnectionEvent) => {
+    this.session.on("connectionCreated", (event: ConnectionEvent) => {
       if (event.connection.connectionId === this.session.connection.connectionId) {
-          console.warn('YOUR OWN CONNECTION CREATED!');
-          console.warn('Conection DATA: ' + this.session.connection.data);
-          const chatData: UserModel = JSON.parse(event.connection.data);
-          this.userChat = chatData;
-          this.userChat.connectionId = this.session.connection.connectionId;
+        console.warn("YOUR OWN CONNECTION CREATED!");
+        console.warn("Conection DATA: " + this.session.connection.data);
+        const chatData: UserModel = JSON.parse(event.connection.data);
+        this.userChat = chatData;
+        this.userChat.connectionId = this.session.connection.connectionId;
       } else {
-          console.warn('OTHER USER\'S CONNECTION CREATED!');
-          console.warn('Conection DATA: ' + event.connection.data);
+        console.warn("OTHER USER'S CONNECTION CREATED!");
+        console.warn("Conection DATA: " + event.connection.data);
       }
       if (event.connection !== this.session.connection) {
-          if (JSON.parse(event.connection.data).isTeacher) {
-              this.teacherConnection = event.connection;
-              console.warn('Conection TEACHER: ' + this.teacherConnection);
-            }
+        if (JSON.parse(event.connection.data).isTeacher) {
+          this.teacherConnection = event.connection;
+          console.warn("Conection TEACHER: " + this.teacherConnection);
+        }
       }
       this.OVConnections.push(event.connection);
 
@@ -371,28 +417,28 @@ export class VideoRoomComponent implements OnInit, OnDestroy {
   }
 
   private subscribedToConectionDestroyed() {
-    this.session.on('connectionDestroyed', (event: ConnectionEvent) => {
-      console.warn('OTHER USER\'S CONNECTION DESTROYED!');
+    this.session.on("connectionDestroyed", (event: ConnectionEvent) => {
+      console.warn("OTHER USER'S CONNECTION DESTROYED!");
       console.warn(event.connection);
 
       // Remove Connection
       const i1 = this.OVConnections.indexOf(event.connection);
       if (i1 !== -1) {
-          this.OVConnections.splice(i1, 1);
+        this.OVConnections.splice(i1, 1);
       }
       // Remove UserData
       const i2 = this.usersData.map((data) => data.userName).indexOf(JSON.parse(event.connection.data).userName);
       if (i2 !== -1) {
-          this.usersData.splice(i2, 1);
+        this.usersData.splice(i2, 1);
       }
     });
   }
 
   private subscribeToSignals() {
-     // Signals
-    if (this.role !== 'TEACHER' || this.roleTeacher === false) {
-      this.session.on('signal:grantIntervention', (msg: SignalEvent) => {
-        if (msg.data === 'true') {
+    // Signals
+    if (this.role !== "TEACHER" || this.roleTeacher === false) {
+      this.session.on("signal:grantIntervention", (msg: SignalEvent) => {
+        if (msg.data === "true") {
           // Publish
           this.publish();
           this.studentAccessGranted = true;
@@ -406,86 +452,106 @@ export class VideoRoomComponent implements OnInit, OnDestroy {
           // Invert intervention request
           this.interventionRequired = !this.interventionRequired;
           // Change intervention icon
-          this.interventionIcon = (this.interventionRequired ? 'voice_over_off' : 'record_voice_over');
+          this.interventionIcon = (this.interventionRequired ? "voice_over_off" : "record_voice_over");
         }
       });
     }
 
-    if (this.role === 'TEACHER' || this.roleTeacher === true) {
-      this.session.on('signal:askIntervention', (msg: SignalEvent) => {
-          const from: Connection = msg.from;
-          const petition: boolean = JSON.parse(msg.data).interventionRequired;
+    if (this.role === "TEACHER" || this.roleTeacher === true) {
+      this.session.on("signal:askIntervention", (msg: SignalEvent) => {
+        const from: Connection = msg.from;
+        const petition: boolean = JSON.parse(msg.data).interventionRequired;
 
-          if (petition) {
-            // Set proper userData  'interventionRequired' property to true
-            this.usersData.map((uData) => {
-              if (uData.userName === JSON.parse(from.data).userName) {
-                uData.interventionRequired = true;
-              }
-            });
-          } else {
-            // Set proper userData  'interventionRequired' property to false
-            this.usersData.map((uData) => {
-              if (uData.userName === JSON.parse(from.data).userName) {
-                uData.interventionRequired = false;
-                this.studentAccessGranted = false;
-                this.myStudentAccessGranted = false;
-              }
-            });
-          }
+        if (petition) {
+          // Set proper userData  'interventionRequired' property to true
+          this.usersData.map((uData) => {
+            if (uData.userName === JSON.parse(from.data).userName) {
+              uData.interventionRequired = true;
+            }
+          });
+        } else {
+          // Set proper userData  'interventionRequired' property to false
+          this.usersData.map((uData) => {
+            if (uData.userName === JSON.parse(from.data).userName) {
+              uData.interventionRequired = false;
+              this.studentAccessGranted = false;
+              this.myStudentAccessGranted = false;
+            }
+          });
+        }
       });
     }
   }
 
   private subscribedToChat() {
-    this.session.on('signal:chat', (event: any) => {
-        const data = JSON.parse(event.data);
+    this.session.on("signal:chat", (event: any) => {
+      const data = JSON.parse(event.data);
 
-        this.messageList.push({
-            connectionId: event.from.connectionId,
-            userName: data.userName,
-            message: data.message,
-        });
-        this.checkNotification();
-        this.chatComponent.scrollToBottom();
+      this.messageList.push({
+        connectionId: event.from.connectionId,
+        userName: data.userName,
+        message: data.message
+      });
+      this.checkNotification();
+      this.chatComponent.scrollToBottom();
     });
   }
-
 
   private connectToSession(): void {
     if (this.token) {
       this.connect(this.token, this.roleTeacher);
     } else {
-      if (this.role === 'TEACHER') {
+      if (this.role === "TEACHER") {
         this.openViduSrv.getToken(this.mySessionId, this.openviduServerUrl, this.openviduSecret)
         .then((token) => {
-          this.session.connect(token, { userName: this.myUserName, isTeacher: true })
+          this.session.connect(token, {
+            userName: this.myUserName,
+            isTeacher: true
+          })
           .then(() => {
             this.connectWebCam();
             this.publish();
-            this.teacher =  true;
+            this.teacher = true;
           })
           .catch((error) => {
-            this.error.emit({ error: error.error, messgae: error.message, code: error.code, status: error.status });
-            console.log('There was an error connecting to the session:', error.code, error.message);
-            this.openDialogError('There was an error connecting to the session:', error.message);
+            this.error.emit({
+              error: error.error,
+              messgae: error.message,
+              code: error.code,
+              status: error.status
+            });
+            console.log("There was an error connecting to the session:", error.code, error.message);
+            this.openDialogError("There was an error connecting to the session:", error.message);
           });
         })
         .catch((error) => {
-          this.error.emit({ error: error.error, messgae: error.message, code: error.code, status: error.status });
-          console.log('There was an error getting the token:', error.code, error.message);
-          this.openDialogError('There was an error getting the token:', error.message);
+          this.error.emit({
+            error: error.error,
+            messgae: error.message,
+            code: error.code,
+            status: error.status
+          });
+          console.log("There was an error getting the token:", error.code, error.message);
+          this.openDialogError("There was an error getting the token:", error.message);
         });
       } else {
         this.openViduSrv.getOnlyToken(this.mySessionId, this.openviduServerUrl, this.openviduSecret)
         .then((token) => {
-          this.session.connect(token, { userName: this.myUserName, isTeacher: false });
+          this.session.connect(token, {
+            userName: this.myUserName,
+            isTeacher: false
+          });
           this.student = true;
         })
         .catch((error) => {
-          this.error.emit({ error: error.error, messgae: error.message, code: error.code, status: error.status });
-          console.log('There was an error getting the token:', error.code, error.message);
-          this.openDialogError('The teacher has not opened the lesson yet!', error.message);
+          this.error.emit({
+            error: error.error,
+            messgae: error.message,
+            code: error.code,
+            status: error.status
+          });
+          console.log("There was an error getting the token:", error.code, error.message);
+          this.openDialogError("The teacher has not opened the lesson yet!", error.message);
         });
       }
     }
@@ -493,28 +559,44 @@ export class VideoRoomComponent implements OnInit, OnDestroy {
 
   private connect(token: string, roleTeacher: boolean): void {
     if (roleTeacher === true) {
-      this.session.connect(token, { userName: this.myUserName, isTeacher: true })
+      this.session.connect(token, {
+        userName: this.myUserName,
+        isTeacher: true
+      })
       .then(() => {
         this.connectWebCam();
         this.publish();
-        this.teacher =  true;
+        this.teacher = true;
       })
       .catch((error) => {
-        this.error.emit({ error: error.error, messgae: error.message, code: error.code, status: error.status });
-        console.log('There was an error connecting to the session:', error.code, error.message);
-        this.openDialogError('There was an error connecting to the session:', error.message);
+        this.error.emit({
+          error: error.error,
+          messgae: error.message,
+          code: error.code,
+          status: error.status
+        });
+        console.log("There was an error connecting to the session:", error.code, error.message);
+        this.openDialogError("There was an error connecting to the session:", error.message);
       });
     } else {
-      this.session.connect(token, { userName: this.myUserName, isTeacher: false })
+      this.session.connect(token, {
+        userName: this.myUserName,
+        isTeacher: false
+      })
       .then(() => {
         this.student = true;
         this.joinSession.emit();
         this.openviduLayout.updateLayout();
       })
       .catch((error) => {
-        this.error.emit({ error: error.error, messgae: error.message, code: error.code, status: error.status });
-        console.log('There was an error connecting to the session:', error.code, error.message);
-        this.openDialogError('There was an error connecting to the session:', error.message);
+        this.error.emit({
+          error: error.error,
+          messgae: error.message,
+          code: error.code,
+          status: error.status
+        });
+        console.log("There was an error connecting to the session:", error.code, error.message);
+        this.openDialogError("There was an error connecting to the session:", error.message);
       });
     }
   }
@@ -525,36 +607,36 @@ export class VideoRoomComponent implements OnInit, OnDestroy {
       videoSource: undefined,
       publishAudio: true,
       publishVideo: true,
-      resolution: '640x480',
+      resolution: "640x480",
       frameRate: 30,
-      insertMode: 'APPEND',
-      mirror: true,
+      insertMode: "APPEND",
+      mirror: true
     });
   }
 
   private publish() {
-    this.OVPublisher.on('streamCreated', (event: StreamEvent) => {
-    console.warn('OpenVidu stream created by Publisher: ', event.stream);
+    this.OVPublisher.on("streamCreated", (event: StreamEvent) => {
+      console.warn("OpenVidu stream created by Publisher: ", event.stream);
 
-    const streamManager: StreamManager = event.stream.streamManager;
+      const streamManager: StreamManager = event.stream.streamManager;
 
-    if (JSON.parse(streamManager.stream.connection.data).isTeacher) {
+      if (JSON.parse(streamManager.stream.connection.data).isTeacher) {
         this.teacherStream = streamManager;
-    } else {
+      } else {
         this.extraStreamManager = this.teacherStream;
-    }
-    this.mainStreamManager = streamManager;
+      }
+      this.mainStreamManager = streamManager;
     });
 
-    this.OVPublisher.on('videoElementCreated', (event: VideoElementEvent) => {
-        console.warn('OpenVidu video element created by Publisher: ', event.element);
+    this.OVPublisher.on("videoElementCreated", (event: VideoElementEvent) => {
+      console.warn("OpenVidu video element created by Publisher: ", event.element);
     });
-    this.session.publish(this.OVPublisher).then (() => {
+    this.session.publish(this.OVPublisher).then(() => {
       this.joinSession.emit();
     });
-    this.OVPublisher.on('streamPlaying', () => {
+    this.OVPublisher.on("streamPlaying", () => {
       this.openviduLayout.updateLayout();
-      (<HTMLElement>this.mainStreamManager.videos[0].video).parentElement.classList.remove('custom-class');
+      (<HTMLElement>this.mainStreamManager.videos[0].video).parentElement.classList.remove("custom-class");
     });
   }
 
@@ -564,8 +646,11 @@ export class VideoRoomComponent implements OnInit, OnDestroy {
 
   private openDialogError(message, messageError: string) {
     this.dialog.open(DialogErrorComponent, {
-      width: '450px',
-      data: { message: message, messageError: messageError },
+      width: "450px",
+      data: {
+        message: message,
+        messageError: messageError
+      }
     });
   }
 
@@ -578,52 +663,8 @@ export class VideoRoomComponent implements OnInit, OnDestroy {
     this.openviduLayout.updateLayout();
   }
 
-  askForIntervention() {
-    this.connectWebCam();
-
-    this.OVPublisher.on('accessAllowed', (event) => {
-      console.warn('OpenVidu camera access allowed');
-
-      const msg = {
-        interventionRequired: !this.interventionRequired
-      };
-
-      this.session.signal({
-        type: 'askIntervention',
-        to: [this.teacherConnection],
-        data: JSON.stringify(msg)
-      });
-
-      // Invert intervention request
-      this.interventionRequired = !this.interventionRequired;
-      // Change intervention icon
-      this.interventionIcon = (this.interventionRequired ? 'voice_over_off' : 'record_voice_over');
-
-    });
-
-    this.OVPublisher.on('accessDenied', (event) => {
-      console.error('OpenVidu camera access denied');
-    });
-  }
-
-  grantIntervention(grant: boolean, userData: UserModel) {
-    this.session.signal({
-      type: 'grantIntervention',
-      to: this.OVConnections.filter(connection => JSON.parse(connection.data).userName === userData.userName),
-      data: grant.toString()
-    });
-    // Set 'accessGranted' property of proper userData to 'grant' value
-    this.usersData.map((u) => {
-        if (u.userName === userData.userName) {
-        u.accessGranted = grant;
-        u.interventionRequired = grant;
-        }
-    });
-    this.studentAccessGranted = grant;
-  }
-
   private checkTheme() {
-    this.lightTheme = this.theme === 'light';
+    this.lightTheme = this.theme === "light";
   }
 
 }

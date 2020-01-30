@@ -3,54 +3,56 @@
 
 <head>
     <title>openvidu-web-component</title>
-    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
-    <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
-        crossorigin="anonymous"></script>
+    <link href="favicon.ico" rel="shortcut icon" type="image/x-icon">
+    <script crossorigin="anonymous"
+            integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+            src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
     <script src="app.js"></script>
-    <link rel="stylesheet" href="styles.css">
-    <script src="openvidu-teaching-webcomponent-2.8.0.js"></script>
-    <link rel="stylesheet" href="openvidu-teaching-webcomponent-2.8.0.css">
+    <link href="styles.css" rel="stylesheet">
+    <script src="openvidu-teaching-webcomponent-2.11.0.js"></script>
+    <link href="openvidu-teaching-webcomponent-2.11.0.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Pacifico" rel="stylesheet">
 </head>
 
 <body>
-    <header>
-        <p><span> Lernim </span> - Openvidu Web Component </p>
-    </header>
-    <!-- Form to connect to a video-session -->
-    <div id="main" >
-        <div id= "logo">
-            <img src="Captura.PNG" alt="logo">
-        </div>
-        <div id="login" >
-            <form onsubmit="joinSession(); return false">
-                <div class= "flex-container" >
-                    <label>Session Name:</label>
-                    <input type="text" id="sessionName" value="SessionA" required>
-                </div>
-                <div class= "flex-container" >
-                    <label>User Name:</label>
-                    <input type="text" id="user" value="User1">
-                </div>
-                <div class="center">
-                    <label>Is teacher?:</label>
-                    <input type="checkbox" id="checkTeacher">
-                </div>
-                <div class="center">
-                    <input class="button" type="submit" value="JOIN VIDEO">
-                </div>
-            </form>
-        </div>
+<header>
+    <p><span> Lernim </span> - Openvidu Web Component </p>
+</header>
+<!-- Form to connect to a video-session -->
+<div id="main">
+    <div id="logo">
+        <img alt="logo" src="Captura.PNG">
     </div>
-    <footer>
-        <div>
-            <p class="infoFooter1"> This is a sample application Demo </p>  
-            <p class="infoFooter2"><a href="https://github.com/naevatec/lernim-web-ionic/tree/master/demo-webcomponent" target="_blank"> GitHub repository </a></p> 
-        </div>
-    </footer>
+    <div id="login">
+        <form onsubmit="joinSession(); return false">
+            <div class="flex-container">
+                <label>Session Name:</label>
+                <input id="sessionName" required type="text" value="SessionA">
+            </div>
+            <div class="flex-container">
+                <label>User Name:</label>
+                <input id="user" type="text" value="User1">
+            </div>
+            <div class="center">
+                <label>Is teacher?:</label>
+                <input id="checkTeacher" type="checkbox">
+            </div>
+            <div class="center">
+                <input class="button" type="submit" value="JOIN VIDEO">
+            </div>
+        </form>
+    </div>
+</div>
+<footer>
+    <div>
+        <p class="infoFooter1"> This is a sample application Demo </p>
+        <p class="infoFooter2"><a href="https://github.com/naevatec/lernim-web-ionic/tree/master/demo-webcomponent"
+                                  target="_blank"> GitHub repository </a></p>
+    </div>
+</footer>
 
-    <!-- OpenVidu Web Component -->
-    <openvidu-teaching-webcomponent style="display: none;"></openvidu-teaching-webcomponent>
+<!-- OpenVidu Web Component -->
+<openvidu-teaching-webcomponent style="display: none;"></openvidu-teaching-webcomponent>
 
 </body>
 

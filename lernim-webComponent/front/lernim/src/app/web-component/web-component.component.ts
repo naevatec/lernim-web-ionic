@@ -1,11 +1,11 @@
-import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
-import { ISessionCongif } from '../shared/models/webcomponent-config';
-import { VideoRoomComponent } from '../video-room/video-room.component';
+import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from "@angular/core";
+import { ISessionCongif } from "../shared/models/webcomponent-config";
+import { VideoRoomComponent } from "../video-room/video-room.component";
 
 @Component({
-  selector: 'app-web-component',
-  templateUrl: './web-component.component.html',
-  styleUrls: ['./web-component.component.css'],
+  selector: "app-web-component",
+  templateUrl: "./web-component.component.html",
+  styleUrls: ["./web-component.component.css"]
 })
 export class WebComponentComponent implements OnInit {
   _sessionName: string;
@@ -20,18 +20,18 @@ export class WebComponentComponent implements OnInit {
   @Output() leaveSession = new EventEmitter<any>();
   @Output() error = new EventEmitter<any>();
 
-  @ViewChild('videoRoom') videoRoom: VideoRoomComponent;
+  @ViewChild("videoRoom", {static: false}) videoRoom: VideoRoomComponent;
 
   public display = false;
 
-  constructor() {}
+  constructor() {
+  }
 
-  @Input('sessionConfig')
-  set sessionConfig(config: any) {
+  @Input("sessionConfig") set sessionConfig(config: any) {
     let sessionConfig: ISessionCongif;
-    console.log('Session config input ', config);
+    console.log("Session config input ", config);
     sessionConfig = config;
-    if (typeof config === 'string') {
+    if (typeof config === "string") {
       sessionConfig = JSON.parse(config);
     }
     if (sessionConfig) {
@@ -47,11 +47,12 @@ export class WebComponentComponent implements OnInit {
     }
   }
 
-  ngOnInit() {}
+  ngOnInit() {
+  }
 
   validateParameters(): boolean {
-    if ((this._sessionName && this.openviduServerUrl && this.openviduSecret && this._user /*&& this._roleTeacher*/)
-    || (this._token && this._user /*&& this._roleTeacher*/)) {
+    if ((this._sessionName && this.openviduServerUrl && this.openviduSecret && this._user /*&& this._roleTeacher*/) ||
+      (this._token && this._user /*&& this._roleTeacher*/)) {
       return true;
     }
     return false;
